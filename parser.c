@@ -360,29 +360,23 @@ void handle_command_or_argument(const char *input, int *i, int len, t_token **to
 void concatinate(t_token **tokens) {
     t_token *current = *tokens;
 
-    while (current) {
-        if (current->type == COMMANDE || current->type == ARG) {
-            t_token *next = current->next;
-            while (next && (next->type == ARG || next->type == COMMANDE)) {
-                if (current->space == 1 || next->space == 1) {
-                    // If there's a space, stop concatenation.
-                    break;
-                } else {
-                    // Concatenate arguments if there's no space and not within quotes.
-                    char *new_value = ft_strjoin(current->value, next->value);
-                    free(current->value);
-                    current->value = new_value;
-
-                    // Remove the next token from the list
-                    t_token *temp = next;
-                    current->next = next->next;
-                    free(temp->value);
-                    free(temp);
-                    next = current->next;
-                }
+    while (current && current->next) {
+        t_token *next = current->next;
+        if ((current->type == ARG || current->type == COMMANDE) && (next->type == ARG || next->type == COMMANDE)) {
+            if (current->space == 0) {
+                char *concatinated = ft_strjoin(current->value, next->value);
+                free(current->value);
+                current->value = concatinated;
+                current->space = next->space; // Preserve the space flag from the next token
+                current->next = next->next;
+                free(next->value);
+                free(next);
+            } else {
+                current = current->next;
             }
+        } else {
+            current = current->next;
         }
-        current = current->next;
     }
 }
 
