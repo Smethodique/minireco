@@ -34,21 +34,14 @@ void	free_tokens(t_token *head) // Explicitly declare return type as void
 }
 t_token	*new_token(int type, const char *value)
 {
-    t_token	*token;
+	t_token	*token;
 
-    token = malloc(sizeof(t_token));
-    if (!token)
-        return (NULL);
-    token->type = type;
-    token->value = ft_strdup(value);
-    if (!token->value)
-    {
-        free(token);
-        return (NULL);
-    }
-    token->space = 0;
-    token->next = NULL;
-    return (token);
+	token = malloc(sizeof(t_token));
+	token->type = type;
+	token->value = ft_strdup(value);
+	token->space = 0;
+	token->next = NULL;
+	return (token);
 }
 int	get_status(void)
 {
@@ -465,7 +458,9 @@ void	handle_command_or_argument(const char *input, int *i, int len,
 	if (in_single_quotes || in_double_quotes)
 	{
 		fprintf(stderr, "Error: Unclosed quote\n");
-		return;
+		free_tokens(*tokens);
+		*tokens = NULL;
+		return ;
 	}
 	value = strndup(input + start, *i - start);
 	if (!value)
@@ -486,15 +481,16 @@ void	handle_command_or_argument(const char *input, int *i, int len,
 		return ;
 	}
 	if (*tokens == NULL || last_token->type == PIPE)
+	{
 		type = COMMANDE;
+	}
 	else
+	{
 		type = ARG;
+	}
 	new = new_token(type, final_value);
-	
-
 	new->space = (input[*i] == ' ');
 	add_token(tokens, new);
-	free_tokens(*tokens);
 	free(final_value);
 }
 
@@ -743,8 +739,7 @@ int	validate_syntax(t_token *tokens)
 	if (command_count == 0 && redirection_count == 0)
 	{
 		fprintf(stderr, "Error: No valid commands or redirections found\n");
-		tokens = NULL;
-		return 0 ;
+		return 0;
 	}
 	return 1;
 }
@@ -756,6 +751,22 @@ void	print_tokens(t_token *tokens)
 		printf("Type: %d, Value: %s\n", tokens->type, tokens->value);
 		tokens = tokens->next;
 	}
+}
+int check_heredoc_delim(t_token *tokens)
+{
+	// Check if the token after HEREDOC is PIPE, OUTPUT, INPUT, APPEND, or another HEREDOC
+	while (tokens)
+	{
+		if (tokens->type == HEREDOC)
+		{
+			if (tokens->next && (tokens->next->type == INPUT || tokens->next->type == OUTPUT || tokens->next->type == HEREDOC || tokens->next->type == APPEND || tokens->next->type == PIPE))
+			{
+				return 0;
+			}
+		}
+		tokens = tokens->next;
+	}
+	return 1;
 }
 t_command	*parse_tokens(t_token *tokens)
 {
@@ -773,6 +784,11 @@ t_command	*parse_tokens(t_token *tokens)
 	status = get_status();
 	if (!validate_syntax(tokens))
 	{
+		return NULL;
+	}
+	if(check_heredoc_delim(tokens) == 0)
+	{
+		ft_putstr_fd("Error: Missing delimiter after heredoc\n", 2);
 		return NULL;
 	}
 	while (tokens)
@@ -841,7 +857,9 @@ t_command	*parse_tokens(t_token *tokens)
 				fprintf(stderr, "Error: Missing delimiter after heredoc\n");
 				return NULL;
 			}
+		
 			heredoc_content = handle_heredoc(tokens->next->value, 1);
+		
 			ft_strcpy(temp_filename, "/tmp/minishell_heredocXXXXXX");
 			fd = my_mkstemp(temp_filename);
 			if (fd == -1)
