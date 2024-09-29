@@ -12,6 +12,7 @@ int create_temp_file(char *template) {
     while (1) {
         int i = 0;
         while (i < 6) {
+            
             template[strlen(template) - 6 + i] = 'a' + myrand() % 26;
             i++;
         }
