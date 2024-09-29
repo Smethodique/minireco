@@ -34,14 +34,21 @@ void	free_tokens(t_token *head) // Explicitly declare return type as void
 }
 t_token	*new_token(int type, const char *value)
 {
-	t_token	*token;
+    t_token	*token;
 
-	token = malloc(sizeof(t_token));
-	token->type = type;
-	token->value = ft_strdup(value);
-	token->space = 0;
-	token->next = NULL;
-	return (token);
+    token = malloc(sizeof(t_token));
+    if (!token)
+        return (NULL);
+    token->type = type;
+    token->value = ft_strdup(value);
+    if (!token->value)
+    {
+        free(token);
+        return (NULL);
+    }
+    token->space = 0;
+    token->next = NULL;
+    return (token);
 }
 int	get_status(void)
 {
@@ -458,9 +465,7 @@ void	handle_command_or_argument(const char *input, int *i, int len,
 	if (in_single_quotes || in_double_quotes)
 	{
 		fprintf(stderr, "Error: Unclosed quote\n");
-		free_tokens(*tokens);
-		*tokens = NULL;
-		return ;
+		return;
 	}
 	value = strndup(input + start, *i - start);
 	if (!value)
@@ -481,16 +486,15 @@ void	handle_command_or_argument(const char *input, int *i, int len,
 		return ;
 	}
 	if (*tokens == NULL || last_token->type == PIPE)
-	{
 		type = COMMANDE;
-	}
 	else
-	{
 		type = ARG;
-	}
 	new = new_token(type, final_value);
+	
+
 	new->space = (input[*i] == ' ');
 	add_token(tokens, new);
+	free_tokens(*tokens);
 	free(final_value);
 }
 
@@ -739,7 +743,8 @@ int	validate_syntax(t_token *tokens)
 	if (command_count == 0 && redirection_count == 0)
 	{
 		fprintf(stderr, "Error: No valid commands or redirections found\n");
-		return 0;
+		tokens = NULL;
+		return 0 ;
 	}
 	return 1;
 }

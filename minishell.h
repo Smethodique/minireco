@@ -82,6 +82,14 @@ typedef struct s_quote_info
 	char quote_char;
 } t_quote_info;
 
+typedef struct s_handle_quotes_params
+{
+    const char *input;
+    int *i;
+    t_quote_info quote_info;
+    t_token **tokens;
+} t_handle_quotes_params;
+
 typedef struct s_expand_vars
 {
 	char	*result;
@@ -125,6 +133,7 @@ t_token *tokenize_input(const char *input);
 int handle_quotes(const char *input, int *i, t_quote_info quote_info, t_token **tokens);
 char *remove_quotes(const char *str);
 void print_tokens(t_token *tokens);
+int	calculate_quote_num(const char *input, int len, int *j, int *p);
 int my_mkstemp(char *template);
 char	*expand_variables(const char *str);
 
