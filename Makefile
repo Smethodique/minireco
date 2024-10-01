@@ -1,10 +1,12 @@
 NAME = minishell
-SRCS =  main.c  signals.c parsing/parser.c parsing/util_herdoc.c parsing/quote_handling.c
+SRCS =  main.c signals.c parsing/parser.c parsing/util_herdoc.c parsing/quote_handling.c \
+parsing/parse_token.c parsing/parse_token_norme.c parsing/toknaize.c parsing/quote_helper.c \
+parsing/lexer.c
 OBJS = $(SRCS:.c=.o)
 LIBFT = 1337Libft/libft.a
 CC = cc
-CFLAGS = -Wall -Wextra -Werror  -g 
-LDFLAGS = -L 1337Libft -lft -lreadline 
+CFLAGS = -Wall -Wextra -Werror -g
+LDFLAGS = -L1337Libft -lft -lreadline
 
 all: $(NAME)
 

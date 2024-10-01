@@ -1,95 +1,98 @@
+
 #include "../minishell.h"
 
-static int	handle_quotes_finalize(t_handle_quotes_params *params,
-		char *final_result, int start)
+static int	process_quote_content(const char *input, int *i, int quote_len,
+		char quote_char)
 {
-	t_token_type	type;
-	t_token			*last_token;
+	int	escaped;
 
-	last_token = NULL;
-	(void)start;
-	if (*(params->tokens) == NULL || (*(params->tokens))->type == PIPE)
-		type = COMMANDE;
-	else
-		type = ARG;
-	last_token = new_token(type, final_result);
-	add_token(params->tokens, last_token);
-	if (params->quote_info.quote_char == '"')
-		free(final_result);
-	if (*(params->i) + 1 < params->quote_info.len && params->input[*(params->i)
-		+ 1] == ' ')
+	escaped = 0;
+	while (*i < quote_len)
 	{
-		if (last_token != NULL)
-			last_token->space = 1;
+		if (input[*i] == '\\' && !escaped && quote_char == '"')
+		{
+			escaped = 1;
+			(*i)++;
+			continue ;
+		}
+		else if (input[*i] == quote_char && !escaped)
+		{
+			return (1);
+		}
+		else
+		{
+			escaped = 0;
+		}
+		(*i)++;
 	}
-	(*(params->i))++;
-	return (1);
+	ft_putstr_fd("Error: unclosed quote\n", 2);
+	return (0);
 }
-static int	handle_quotes_process(t_handle_quotes_params *params, char *quoted,
-		int start)
+
+static char	*extract_and_process_quote(const char *input, int start, int end,
+		char quote_char)
 {
-	char	*final_result;
+	char	*quoted;
 	char	*result;
 
-	final_result = NULL;
-	if (params->quote_info.quote_char == '"')
+	quoted = ft_substr(input, start, end - start);
+	if (!quoted)
+		return (NULL);
+	result = NULL;
+	if (quote_char == '"')
 	{
 		result = expand_variables(quoted);
 		free(quoted);
-		final_result = result;
+		return (result);
 	}
-	else
-		final_result = quoted;
-	if (!final_result)
-		return (0);
-	return (handle_quotes_finalize(params, final_result, start));
+	return (quoted);
 }
 
-static int	handle_quotes_core(t_handle_quotes_params *params, int start,
-		int escaped)
+static int	create_and_add_token(t_token **tokens, char *final_result,
+		t_token_type type)
 {
-	char	*quoted;
-	while (*(params->i) < params->quote_info.len)
-	{
-		if (params->input[*(params->i)] == '\\' && !escaped
-			&& params->quote_info.quote_char == '"')
-		{
-			escaped = 1;
-			(*(params->i))++;
-			continue ;
-		}
-		else if (params->input[*(params->i)] == params->quote_info.quote_char
-				&& !escaped)
-			break ;
-		else
-			escaped = 0;
-		(*(params->i))++;
-	}
-	if (*(params->i) >= params->quote_info.len
-		|| params->input[*(params->i)] != params->quote_info.quote_char || !calculate_quote_num(params->input, params->quote_info.len, &params->quote_info.len, &params->quote_info.len))
-		return (ft_putstr_fd("Error: Unclosed quote\n", 2), 0);
-	quoted = ft_substr(params->input, start, *(params->i) - start);
-	if (!quoted)
+	t_token	*last_token;
+
+	last_token = new_token(type, final_result);
+	if (!last_token)
 		return (0);
-	return (handle_quotes_process(params, quoted, start));
+	add_token(tokens, last_token);
+	return (1);
+}
+ void   help_norm(const char *input, int *i, t_quote_info quote_info, t_token **tokens) {
+    if (*i + 1 < quote_info.len && input[*i + 1] == ' ') 
+	{
+        t_token *last_token = *tokens;
+        while (last_token && last_token->next)
+            last_token = last_token->next;
+        if (last_token)
+            last_token->space = 1;
+    }
 }
 
 int	handle_quotes(const char *input, int *i, t_quote_info quote_info,
 		t_token **tokens)
 {
-	t_handle_quotes_params	params;
-	int						start;
-	int						escaped;
+	int				start;
+	char			*final_result;
+	t_token_type	type;
+	// t_token			*last_token;
 
-	params.input = input;
-	params.i = i;
-	params.quote_info = quote_info;
-	params.tokens = tokens;
 	start = ++(*i);
-	escaped = 0;
-	if (!handle_quotes_core(&params, start, escaped))
+	if (!process_quote_content(input, i, quote_info.len, quote_info.quote_char))
 		return (0);
+	final_result = extract_and_process_quote(input, start, *i,
+			quote_info.quote_char);
+	if (*tokens == NULL || (*tokens)->type == PIPE)
+		type = COMMANDE;
+	else
+		type = ARG;
+	if (!create_and_add_token(tokens, final_result, type))
+		return (free(final_result), 0);
+	if (quote_info.quote_char == '"')
+		free(final_result);
+	help_norm(input, i, quote_info, tokens);
+
+	(*i)++;
 	return (1);
 }
-
-

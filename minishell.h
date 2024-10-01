@@ -119,6 +119,17 @@ typedef struct s_quote_vars
 	int		i;
 }	t_quote_vars;
 
+typedef struct s_parse_context
+{
+    t_command *command_list;
+    t_command *current_command;
+    int status;
+    char *env_value;
+    char *heredoc_content;
+    char temp_filename[sizeof("/tmp/minishell_heredocXXXXXX")];
+    int fd;
+    char exit_status_str[12];
+} t_parse_context;
 // Existing function prototypes
 void init_shell();
 void sigint_handler(int sig);
@@ -150,7 +161,22 @@ void add_redirection(t_command *cmd, int type, char *filename);
 void add_command(t_command **list, t_command *cmd);
 t_command *parse_tokens(t_token *tokens);
 void free_command(t_command *cmd);
+int	get_status(void);
+int validate_syntax(t_token *tokens);
+char	*remove_single_quotes(const char *str);
+void	handlee_heredoc(int *i, t_token **tokens);
+void	handle_heredoc_delim(const char *input, int *i, int len, t_token **tokens);
+void	handle_redirections(int *i, t_redirection_chars chars, t_token **tokens, int *expect_filename);
+void	handle_filename(const char *input, int *i, int len, t_token **tokens);
+void	handle_env_var(const char *input, int *i, int len, t_token **tokens);
+void    concatinate(t_token **tokens);
+int check_heredoc_delim(t_token *tokens);
 void free_command_list(t_command *list);
 void print_command_list(t_command *list);
+ void parse_token_one(t_parse_context *ctx, t_token **tokens);
+ void parse_token_two(t_parse_context *ctx, t_token **tokens);
+ void parse_token_three(t_parse_context *ctx, t_token **tokens);
+ void parse_token_four(t_parse_context *ctx, t_token **tokens);
+ void parse_token_five(t_parse_context *ctx, t_token **tokens);
 
 #endif
