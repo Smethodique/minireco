@@ -1,15 +1,16 @@
 
 
 #include "../minishell.h"
-
-
-int	get_status(void)
+int ft_isalpha(int c)
 {
-	int	status;
-
-	waitpid(-1, &status, WNOHANG);
-	return (status);
+	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
 }
+
+int ft_isalnum(int c)
+{
+	return (ft_isalpha(c) || ft_isdigit(c));
+}
+
 
 void	handlee_heredoc(int *i, t_token **tokens)
 {
@@ -39,34 +40,7 @@ void	handle_heredoc_delim(const char *input, int *i, int len,
 }
 
 // Function to handle quotes
-char	*get_env_value(const char *env_name)
-{
-	int		status;
-	char	exit_status_str[12];
-	char	*env_end;
-	char	*name;
-	char	*value;
 
-	if (*env_name == '?')
-	{
-		status = get_status();
-		snprintf(exit_status_str, sizeof(exit_status_str), "%d",
-				WEXITSTATUS(status));
-		return (ft_strdup(exit_status_str));
-	}
-	env_end = (char *)env_name;
-	while (*env_end && (isalnum(*env_end) || *env_end == '_'))
-		env_end++;
-	name = ft_substr(env_name, 0, env_end - env_name);
-	value = getenv(name);
-	if (value)
-	{
-		value = ft_strdup(value);
-		return (value);
-	}
-	ft_strdup("");
-	return (value);
-}
 
 
 
@@ -90,20 +64,13 @@ char	*expand_variables(const char *str)
 		else
 		{
 			vars.before_env = ft_substr(vars.temp, 0, vars.env_pos - vars.temp);
-			vars.env_value = get_env_value(vars.env_pos + 1);
 			vars.new_result = ft_strjoin(vars.result, vars.before_env);
 			free(vars.result);
 			free(vars.before_env);
 			vars.result = vars.new_result;
-			if (vars.env_value)
-			{
-				vars.new_result = ft_strjoin(vars.result, vars.env_value);
-				free(vars.result);
-				free(vars.env_value);
-				vars.result = vars.new_result;
-			}
+
 			vars.temp = vars.env_pos + 1;
-			while (*vars.temp && (isalnum(*vars.temp) || *vars.temp == '_'))
+			while (*vars.temp && (ft_isalnum(*vars.temp) || *vars.temp == '_'))
 				vars.temp++;
 		}
 	}
@@ -161,158 +128,14 @@ void	handle_filename(const char *input, int *i, int len, t_token **tokens)
 }
 
 // Function to handle environment variables
-void	handle_env_var(const char *input, int *i, int len, t_token **tokens)
-{
-	int		start;
-	char	*env_var;
-	char	**split_value;
-	int		j;
-	t_token	*new;
 
-	start = *i;
-	(*i)++;
-	if (*i < len && input[*i] == '{')
-	{
-		(*i)++;
-		while (*i < len && input[*i] != '}')
-			(*i)++;
-		if (*i < len)
-			(*i)++;
-	}
-	else if (*i < len && (isalnum(input[*i]) || input[*i] == '_'))
-	{
-		while (*i < len && (isalnum(input[*i]) || input[*i] == '_'))
-			(*i)++;
-	}
-	else
-	{
-		add_token(tokens, new_token(ARG, "$"));
-		return ;
-	}
-	env_var = ft_substr(input, start, *i - start);
-	char *env_value = getenv(env_var + 1); // +1 to skip the '$'
-	if (env_value)
-	{
-		// Check if the value is quoted
-		if ((env_value[0] == '"' && env_value[strlen(env_value) - 1] == '"') ||
-			(env_value[0] == '\'' && env_value[strlen(env_value) - 1] == '\''))
-		{
-			// If quoted, add as is
-			add_token(tokens, new_token(ARG, env_value));
-		}
-		else
-		{
-			// If not quoted, split and add each part as a separate token
-			split_value = ft_splitD(env_value, " \t");
-			printf("split_value: %s\n", split_value[0]);
-			j = 0;
-			while (split_value[j] != NULL)
-			{
-				new = new_token(ARG, split_value[j]);
-				if (split_value[j + 1] != NULL)
-					new->space = 1;
-				add_token(tokens, new);
-				free(split_value[j]);
-				j++;
-			}
-			free(split_value);
-		}
-	}
-	else
-	{
-		add_token(tokens, new_token(ARG, ""));
-	}
-	free(env_var);
-}
+
+
 
 // Function to handle commands and arguments
 
 
-void	handle_command_or_argument(const char *input, int *i, int len,
-		t_token **tokens)
-{
-	int				start;
-	int				in_single_quotes;
-	int				in_double_quotes;
-	int				escaped;
-	char			*value;
-	t_token_type	type;
-	t_token			*new;
-	t_token			*last_token;
-	char			*expanded_value;
-	char			*final_value;
 
-	start = *i;
-	in_single_quotes = 0;
-	in_double_quotes = 0;
-	escaped = 0;
-	last_token = *tokens;
-	while (last_token && last_token->next)
-	{
-		last_token = last_token->next;
-	}
-	while (*i < len)
-	{
-		if (input[*i] == '\\' && !escaped)
-		{
-			escaped = 1;
-		}
-		else if (input[*i] == '\'' && !in_double_quotes && !escaped)
-		{
-			in_single_quotes = !in_single_quotes;
-		}
-		else if (input[*i] == '"' && !in_single_quotes && !escaped)
-		{
-			in_double_quotes = !in_double_quotes;
-		}
-		else if (!in_single_quotes && !in_double_quotes && !escaped &&
-					(isspace(input[*i]) || input[*i] == '|' || input[*i] == '<'
-							|| input[*i] == '>'))
-		{
-			break ;
-		}
-		escaped = 0;
-		(*i)++;
-	}
-	// Check for unclosed quotes
-	if (in_single_quotes || in_double_quotes)
-	{
-		fprintf(stderr, "Error: Unclosed quote\n");
-		free_tokens(*tokens);
-		*tokens = NULL;
-		return ;
-	}
-	value = strndup(input + start, *i - start);
-	if (!value)
-	{
-		fprintf(stderr, "Error: Memory allocation failed\n");
-		return ;
-	}
-	expanded_value = expand_variables(value);
-	free(value);
-	if (!expanded_value)
-	{
-		return ;
-	}
-	final_value = remove_single_quotes(expanded_value);
-	free(expanded_value);
-	if (!final_value)
-	{
-		return ;
-	}
-	if (*tokens == NULL || last_token->type == PIPE)
-	{
-		type = COMMANDE;
-	}
-	else
-	{
-		type = ARG;
-	}
-	new = new_token(type, final_value);
-	new->space = (input[*i] == ' ');
-	add_token(tokens, new);
-	free(final_value);
-}
 
 
 void concatinate(t_token **tokens)
@@ -325,30 +148,26 @@ void concatinate(t_token **tokens)
     {
         next = current->next;
         if ((current->type == ARG || current->type == COMMANDE) &&
-            (next->type == ARG || next->type == COMMANDE) &&
+            (next->type == ARG || next->type == COMMANDE ) &&
             !current->space)
         {
             new_value = malloc(strlen(current->value) + strlen(next->value) + 1);
+
             if (!new_value)
-            {
-                fprintf(stderr, "Error: Memory allocation failed in concatinate\n");
                 return;
-            }
             strcpy(new_value, current->value);
             strcat(new_value, next->value);
             free(current->value);
             current->value = new_value;
             current->next = next->next;
-            current->space = next->space; // Update the space flag
+            current->space = next->space; 
             free(next->value);
             free(next);
-            if (!current->next) // Ensure current->next is not NULL
+            if (!current->next) 
                 break;
         }
         else
-        {
             current = current->next;
-        }
     }
 }
 
@@ -377,7 +196,6 @@ void	add_argument(t_command *cmd, char *arg)
 	if (trimmed_arg == NULL)
 	{
 		// Handle memory allocation error
-		fprintf(stderr, "Error: Memory allocation failed in add_argument\n");
 		return ;
 	}
 	if (cmd->arg_count == 0)

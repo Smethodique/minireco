@@ -34,6 +34,7 @@ char	*remove_quotes(const char *str)
     {
         free(result);
         printf("Error: unclosed quote\n");
+		g_exit_status = 2 ;
         return (strdup(str));
     }
 	return (result);
@@ -96,6 +97,7 @@ char	*remove_single_quotes(const char *str)
 	{
 		free(result);
 		printf("Error: unclosed quote\n");
+		g_exit_status = 2 ;
 		
 		return (strdup(str));
 	}

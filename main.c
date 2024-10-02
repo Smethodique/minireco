@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-
+int g_exit_status ;
 void init_shell()
 {
     while(1)
@@ -24,6 +24,8 @@ void init_shell()
             }
             add_history(line);
         }
+            printf("g_exit_statu : %d\n", g_exit_status);
+
         free(line);
     }
 }

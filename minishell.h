@@ -18,6 +18,8 @@
 #include <errno.h>
 #include "1337Libft/libft.h"
 
+extern int g_exit_status;
+
 typedef enum {
    COMMANDE,
    ARG,
@@ -33,7 +35,7 @@ typedef enum {
     ENV_VAR,
     SINGLE_QUOTE,
     DOUBLE_QUOTE,
-    EXIT_STATUS,
+    EXIT,
 
 } t_token_type;
 
@@ -42,6 +44,7 @@ typedef struct s_token {
     int quoted;
     char *value;
     int space;
+    int is_env_var;
     struct s_token *next;
     
 } t_token;
@@ -130,6 +133,14 @@ typedef struct s_parse_context
     int fd;
     char exit_status_str[12];
 } t_parse_context;
+
+typedef struct s_env_var_data
+{
+	char	*env_value;
+	char	**split_value;
+	int		j;
+	t_token	*new;
+}	t_env_var_data;
 // Existing function prototypes
 void init_shell();
 void sigint_handler(int sig);

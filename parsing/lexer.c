@@ -45,12 +45,6 @@ t_token	*tokenize_input(const char *input)
 			i++;
 			continue ;
 		}
-		if (current_char == '$' && next_char == '?')
-		{
-			add_token(&tokens, new_token(EXIT_STATUS, "$?"));
-			i += 2;
-			continue ;
-		}
 		if (current_char == '|')
 		{
 			add_token(&tokens, new_token(PIPE, "|"));
@@ -71,6 +65,7 @@ t_token	*tokenize_input(const char *input)
 		}
 		if (current_char == '$')
 		{
+			
 			handle_env_var(input, &i, len, &tokens);
 			continue ;
 		}

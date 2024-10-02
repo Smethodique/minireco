@@ -26,6 +26,7 @@ static int	process_quote_content(const char *input, int *i, int quote_len,
 		(*i)++;
 	}
 	ft_putstr_fd("Error: unclosed quote\n", 2);
+	    g_exit_status = 2;
 	return (0);
 }
 
@@ -85,6 +86,9 @@ int	handle_quotes(const char *input, int *i, t_quote_info quote_info,
 			quote_info.quote_char);
 	if (*tokens == NULL || (*tokens)->type == PIPE)
 		type = COMMANDE;
+	else if ((*tokens)->type == INPUT || (*tokens)->type == OUTPUT
+		|| (*tokens)->type == APPEND )
+		type = FILENAME;
 	else
 		type = ARG;
 	if (!create_and_add_token(tokens, final_result, type))

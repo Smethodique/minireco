@@ -60,11 +60,11 @@ char *expand_env_vars(char *input) {
 
      char *p = input;
     while (*p) {
-        if (*p == '$' && (isalnum(*(p+1)) || *(p+1) == '_')) {
+        if (*p == '$' && (ft_isalnum(*(p+1)) || *(p+1) == '_')) {
             // Found a potential environment variable
              char *var_start = p + 1;
              char *var_end = var_start;
-            while (isalnum(*var_end) || *var_end == '_') var_end++;
+            while (ft_isalnum(*var_end) || *var_end == '_') var_end++;
 
             size_t var_name_len = var_end - var_start;
             char *var_name = malloc(var_name_len + 1);
@@ -118,7 +118,7 @@ char *expand_env_vars(char *input) {
 char *handle_heredoc(const char *delimiter, int expand_vars)
 {
     if (!delimiter) {
-        fprintf(stderr, "Error: Null delimiter\n");
+        ft_putstr_fd("Error: NULL delimiter\n", 2); 
         return NULL;
     }
 
