@@ -59,7 +59,9 @@ void process_value(const char *input, int *i, t_handle_vars *vars, t_token **tok
     free(vars->value);
     if (!vars->expanded_value)
         return ;
-    vars->final_value = remove_single_quotes(vars->expanded_value);
+
+    vars->final_value = remove_quotes(vars->expanded_value);
+ 
     free(vars->expanded_value);
     if (!vars->final_value)
         return ;

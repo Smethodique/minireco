@@ -32,7 +32,6 @@ int my_mkstemp(char *template) {
     if (len < 6)
         return -1;
     p = template + len - 6;
-
     int i = 0;
     while (i < 6) {
         if (p[i] != 'X') {
@@ -40,13 +39,11 @@ int my_mkstemp(char *template) {
         }
         i++;
     }
-
     fd = create_temp_file(template);
     if (fd < 0) {
         perror("mkstemp");
         return -1;
     }
-
     return fd;
 }
 
@@ -61,11 +58,9 @@ char *expand_env_vars(char *input) {
      char *p = input;
     while (*p) {
         if (*p == '$' && (ft_isalnum(*(p+1)) || *(p+1) == '_')) {
-            // Found a potential environment variable
              char *var_start = p + 1;
              char *var_end = var_start;
             while (ft_isalnum(*var_end) || *var_end == '_') var_end++;
-
             size_t var_name_len = var_end - var_start;
             char *var_name = malloc(var_name_len + 1);
             if (!var_name) {

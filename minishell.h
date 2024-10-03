@@ -58,6 +58,22 @@ typedef struct s_command {
     struct s_command *next;
 } t_command;
 
+typedef struct s_expansion
+{
+	char	*result;
+	char	*temp;
+	char	*new_result;
+	char	*before_env;
+	char	*env_pos;
+	char	*env_name;
+	char	*env_value;
+	int		env_len;
+	int		in_single_quote;
+	int		in_double_quote;
+	char	*final_result;
+	char	*unquoted_result;
+}	t_expansion;
+
 typedef struct s_redirection {
     int type;  // INPUT, OUTPUT, or APPEND
     char *filename;
@@ -169,6 +185,7 @@ void free_tokens(t_token *head);
 t_command *new_command();
 void add_argument(t_command *cmd, char *arg);
 void add_redirection(t_command *cmd, int type, char *filename);
+char	*expand_variables(const char *str);
 void add_command(t_command **list, t_command *cmd);
 t_command *parse_tokens(t_token *tokens);
 void free_command(t_command *cmd);

@@ -93,14 +93,5 @@
             (*tokens)->next->type != APPEND && (*tokens)->next->type != HEREDOC)
             (*tokens)->next->type = COMMANDE; // Set the type to COMMANDE
     }
-    else if ((*tokens)->type == EXIT_STATUS)
-    {
-        if (!ctx->current_command)
-        {
-            ctx->current_command = new_command();
-            add_command(&ctx->command_list, ctx->current_command);
-        }
-        snprintf(ctx->exit_status_str, sizeof(ctx->exit_status_str), "%d", WEXITSTATUS(ctx->status));
-        add_argument(ctx->current_command, ctx->exit_status_str);
-    }
+ 
 }

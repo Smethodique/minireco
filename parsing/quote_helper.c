@@ -8,6 +8,7 @@ char	*remove_quotes(const char *str)
 	int		in_double_quotes;
 	int		in_single_quotes;
 
+
 	len = strlen(str);
 	result = malloc(len + 1);
 	j = 0;

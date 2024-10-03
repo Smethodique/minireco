@@ -39,47 +39,10 @@ void	handle_heredoc_delim(const char *input, int *i, int len,
 	free(delimiter);
 }
 
+
 // Function to handle quotes
 
 
-
-
-char	*expand_variables(const char *str)
-{
-	t_expand_vars vars;
-
-	vars.result = ft_strdup("");
-	vars.temp = (char *)str;
-	while ((vars.env_pos = strchr(vars.temp, '$')) && vars.env_pos[1] != '\0')
-	{
-		if (vars.env_pos[1] == '"')
-		{
-			vars.before_env = ft_substr(vars.temp, 0, vars.env_pos - vars.temp);
-			vars.new_result = ft_strjoin(vars.result, vars.before_env);
-			free(vars.result);
-			free(vars.before_env);
-			vars.result = vars.new_result;
-			vars.temp = vars.env_pos + 1;
-		}
-		else
-		{
-			vars.before_env = ft_substr(vars.temp, 0, vars.env_pos - vars.temp);
-			vars.new_result = ft_strjoin(vars.result, vars.before_env);
-			free(vars.result);
-			free(vars.before_env);
-			vars.result = vars.new_result;
-
-			vars.temp = vars.env_pos + 1;
-			while (*vars.temp && (ft_isalnum(*vars.temp) || *vars.temp == '_'))
-				vars.temp++;
-		}
-	}
-	vars.final_result = ft_strjoin(vars.result, vars.temp);
-	free(vars.result);
-	vars.unquoted_result = remove_quotes(vars.final_result);
-	free(vars.final_result);
-	return (vars.unquoted_result);
-}
 
 
 
@@ -151,12 +114,12 @@ void concatinate(t_token **tokens)
             (next->type == ARG || next->type == COMMANDE ) &&
             !current->space)
         {
-            new_value = malloc(strlen(current->value) + strlen(next->value) + 1);
+            new_value = malloc(strlen(current->value) + ft_strlen(next->value) + 1);
 
             if (!new_value)
                 return;
-            strcpy(new_value, current->value);
-            strcat(new_value, next->value);
+            ft_strcpy(new_value, current->value);
+            ft_strcat(new_value, next->value);
             free(current->value);
             current->value = new_value;
             current->next = next->next;
