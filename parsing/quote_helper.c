@@ -1,4 +1,5 @@
 #include "../minishell.h"
+#include <string.h> // Add this line to declare strdup
 
 char	*remove_quotes(const char *str)
 {
@@ -8,10 +9,10 @@ char	*remove_quotes(const char *str)
 	int		in_double_quotes;
 	int		in_single_quotes;
 
-
-	len = strlen(str);
+	len = ft_strlen(str);
 	result = malloc(len + 1);
 	j = 0;
+
 	in_double_quotes = 0;
 	in_single_quotes = 0;
 	if (!result)
@@ -20,24 +21,24 @@ char	*remove_quotes(const char *str)
 	while (i < len)
 	{
 		if (str[i] == '"')
-			in_double_quotes = !in_double_quotes;
+		{
+			if (!in_single_quotes)
+				in_double_quotes = !in_double_quotes;
+			else
+				result[j++] = str[i];
+		}
 		else if (str[i] == '\'')
 		{
-			in_single_quotes = !in_single_quotes;
-			result[j++] = str[i]; // Keep single quotes
+			if (!in_double_quotes)
+				in_single_quotes = !in_single_quotes;
+			else
+				result[j++] = str[i];
 		}
 		else
 			result[j++] = str[i];
 		i++;
 	}
 	result[j] = '\0';
-	if (in_double_quotes)
-    {
-        free(result);
-        printf("Error: unclosed quote\n");
-		g_exit_status = 2 ;
-        return (strdup(str));
-    }
 	return (result);
 }
 

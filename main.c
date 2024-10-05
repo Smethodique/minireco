@@ -17,7 +17,7 @@ void init_shell()
                 t_command *commands = parse_tokens(tokens);
                 if (commands)
                 {
-                    print_command_list(commands);  // Print parsed commands for debugging
+                   print_command_list(commands);  // Print command list for debugging
                     free_command_list(commands);
                 }
                 free_tokens(tokens);  // Free tokens
@@ -31,6 +31,7 @@ void init_shell()
 }
 int main()
 {
+    all_signals();
     init_shell();
     return 0;
 }    

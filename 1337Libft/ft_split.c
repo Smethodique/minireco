@@ -25,7 +25,7 @@ static size_t	word_count(const char *s, const char *delimiters)
     int in_word = 0;
     while (*s)
     {
-        if (strchr(delimiters, *s))
+        if (ft_strchr(delimiters, *s))
             in_word = 0;
         else if (!in_word)
         {
@@ -42,7 +42,7 @@ static char *allocate_word(const char *s, size_t len)
     char *word = (char *)malloc(len + 1);
     if (word)
     {
-        strncpy(word, s, len);
+        ft_strncpy(word, s, len);
         word[len] = '\0';
     }
     return (word);
@@ -61,7 +61,7 @@ static void split_helper(const char *s, const char *delimiters, char **arr)
 	k = 0;
     while (s[i])
 	{
-		if (strchr(delimiters, s[i]))
+		if (ft_strchr(delimiters, s[i]))
 		{
 			if (len > 0)
 				arr[j++] = allocate_word(s + k, len);

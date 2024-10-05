@@ -1,5 +1,7 @@
 #include "../minishell.h"
 
+#include "../minishell.h"
+
 t_token	*tokenize_input(const char *input)
 {
 	t_token	*tokens;
@@ -19,6 +21,7 @@ t_token	*tokenize_input(const char *input)
 	{
 		current_char = input[i];
 		next_char = (i + 1 < len) ? input[i + 1] : '\0';
+
 		if (current_char == '<' && next_char == '<')
 		{
 			handlee_heredoc(&i, &tokens);
@@ -33,11 +36,9 @@ t_token	*tokenize_input(const char *input)
 		}
 		if (current_char == '\'' || current_char == '"')
 		{
-			if (!handle_quotes(input, &i, (t_quote_info){len, current_char},
-					&tokens))
-			{
-				return NULL;
-			}
+			if (!handle_quotes(input, &i, (t_quote_info){len, current_char}, &tokens))
+		
+				return (NULL);
 			continue ;
 		}
 		if (isspace(current_char))
@@ -65,10 +66,10 @@ t_token	*tokenize_input(const char *input)
 		}
 		if (current_char == '$')
 		{
-			
 			handle_env_var(input, &i, len, &tokens);
 			continue ;
 		}
+		
 		handle_command_or_argument(input, &i, len, &tokens);
 	}
 	concatinate(&tokens);

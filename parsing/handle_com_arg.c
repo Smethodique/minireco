@@ -32,9 +32,8 @@ void parse_comm(const char *input, int *i, int len, t_handle_vars *vars)
 {
     while (*i < len)
     {
-        if (input[*i] == '\\' && !vars->escaped)
-            vars->escaped = 1;
-        else if (input[*i] == '\'' && !vars->in_double_quotes && !vars->escaped)
+        
+         if (input[*i] == '\'' && !vars->in_double_quotes && !vars->escaped)
             vars->in_single_quotes = !vars->in_single_quotes;
         else if (input[*i] == '"' && !vars->in_single_quotes && !vars->escaped)
             vars->in_double_quotes = !vars->in_double_quotes;
@@ -59,9 +58,7 @@ void process_value(const char *input, int *i, t_handle_vars *vars, t_token **tok
     free(vars->value);
     if (!vars->expanded_value)
         return ;
-
-    vars->final_value = remove_quotes(vars->expanded_value);
- 
+    vars->final_value = ft_strdup(vars->expanded_value);
     free(vars->expanded_value);
     if (!vars->final_value)
         return ;
@@ -77,6 +74,7 @@ void process_value(const char *input, int *i, t_handle_vars *vars, t_token **tok
 void handle_command_or_argument(const char *input, int *i, int len, t_token **tokens)
 {
     t_handle_vars vars;
+  
 
     initialize_handle_vars(&vars, input, i, tokens);
     parse_comm(input, i, len, &vars);

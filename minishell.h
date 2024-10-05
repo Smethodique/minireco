@@ -89,6 +89,11 @@ typedef struct s_tokenizer_params {
     t_token **tokens;
 } t_tokenizer_params;
 
+typedef struct s_heredoc_manager {
+    pid_t *heredoc_pids;  // Array to track child PIDs
+    int heredoc_count;    // Number of active heredocs
+} t_heredoc_manager;
+
 typedef struct s_redirection_chars
 {
 	char current_char;
@@ -170,6 +175,7 @@ void add_token(t_token **head, t_token *new_token);
 t_token *tokenize_input(const char *input);
 int handle_quotes(const char *input, int *i, t_quote_info quote_info, t_token **tokens);
 char *remove_quotes(const char *str);
+
 void print_tokens(t_token *tokens);
 int	calculate_quote_num(const char *input, int len, int *j, int *p);
 int is_valid_delimiter(const char *delimiter);
@@ -180,6 +186,8 @@ char	*expand_variables(const char *str);
 
 
 char *handle_heredoc(const char *delimiter, int expand_vars);
+
+
 void handle_command_or_argument(const char *input, int *i, int len, t_token **tokens);  
 void free_tokens(t_token *head);
 t_command *new_command();
@@ -201,6 +209,7 @@ void    concatinate(t_token **tokens);
 int check_heredoc_delim(t_token *tokens);
 void free_command_list(t_command *list);
 void print_command_list(t_command *list);
+char *remove_enclosing_quotes( char *str);
  void parse_token_one(t_parse_context *ctx, t_token **tokens);
  void parse_token_two(t_parse_context *ctx, t_token **tokens);
  void parse_token_three(t_parse_context *ctx, t_token **tokens);

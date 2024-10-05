@@ -23,23 +23,20 @@ char *process_quotes(t_expansion *exp)
         {
             exp->in_single_quote = !exp->in_single_quote;
         }
-        exp->new_result = ft_strjoin_char(exp->result, *exp->temp); // Append the quote itself
+        exp->new_result = ft_strjoin_char(exp->result, *exp->temp); 
+		
     }
-    else if (*exp->temp == '"') // Handle double quotes
+    else if (*exp->temp == '"') 
     {
-        if (exp->in_single_quote == 0) // Only toggle if not inside single quotes
-        {
+        if (exp->in_single_quote == 0) 
             exp->in_double_quote = !exp->in_double_quote;
-        }
-        exp->new_result = ft_strjoin_char(exp->result, *exp->temp); // Append the quote itself
-    }
-    else // Handle regular characters
-    {
         exp->new_result = ft_strjoin_char(exp->result, *exp->temp);
     }
+    else
+        exp->new_result = ft_strjoin_char(exp->result, *exp->temp);
     free(exp->result);
     exp->result = exp->new_result;
-    exp->temp++; // Move past the current character
+    exp->temp++;
     return (exp->result);
 }
 
@@ -75,8 +72,11 @@ char	*expand_env_variable(t_expansion *exp)
 char	*expand_variables(const char *str)
 {
 	t_expansion exp;
+	printf("str = %s\n", str);
 
 	exp.result = ft_strdup("");
+	exp.in_single_quote = 0;
+	exp.in_double_quote = 0;
 	exp.temp = (char *)str;
 	while (*exp.temp)
 	{
@@ -85,7 +85,7 @@ char	*expand_variables(const char *str)
 			exp.result = process_quotes(&exp);
 			continue;
 		}
-		if ((exp.in_single_quote || exp.in_double_quote) && (exp.env_pos = strchr(exp.temp, '$')) && exp.env_pos[1] != '\0')
+		if (!exp.in_single_quote && (exp.env_pos = ft_strchr(exp.temp, '$')) && exp.env_pos[1] != '\0')
 			exp.result = expand_env_variable(&exp);
 		else
 		{
@@ -97,6 +97,9 @@ char	*expand_variables(const char *str)
 	}
 	exp.final_result = ft_strdup(exp.result);
 	free(exp.result);
+	
 	exp.unquoted_result = remove_quotes(exp.final_result);
-	return(free(exp.final_result), exp.unquoted_result);
+	free(exp.final_result);
+	return(exp.unquoted_result);
 }
+

@@ -71,6 +71,6 @@ int			ft_putundec(unsigned int num);
 int			ft_calclen(int n);
 int			ft_printf(const char *printer, ...);
 int			ft_putadress(void *add);
-char		*ft_strncpy(char *dest, char *src, unsigned int n);
+char		*ft_strncpy(char *dest, const char *src, unsigned int n);
 int ft_strcmp(const char *s1, const char *s2);
 #endif
