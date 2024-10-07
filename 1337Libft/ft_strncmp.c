@@ -14,6 +14,10 @@
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
+	if (!s1 || !s2)
+		return (0);
+	
+	
 	size_t	i;
 	int		result;
 
@@ -30,5 +34,7 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 
 int ft_strcmp(const char *s1, const char *s2)
 {
+	if(!s1 || !s2)
+		return (0);
 	return (ft_strncmp(s1, s2, ft_strlen(s1) + 1));
 }

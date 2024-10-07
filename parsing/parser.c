@@ -141,19 +141,26 @@ void concatinate(t_token **tokens)
 
 
 
-t_command	*new_command(void)
+t_command *new_command(void)
 {
-	t_command	*cmd;
+    t_command *cmd;
 
-	cmd = malloc(sizeof(t_command));
-	cmd->name = NULL;
-	cmd->args = malloc(sizeof(char *) * 64);
-	// Start with space for 64 arguments
-	cmd->arg_count = 0;
-	cmd->pipe_next = 0;
-	cmd->redirections = NULL;
-	cmd->next = NULL;
-	return cmd;
+    cmd = (t_command *)malloc(sizeof(t_command));
+    if (!cmd)
+        return (NULL);
+    cmd->name = NULL;
+    cmd->args = (char **)malloc(sizeof(char *) * 1024);  // Reasonable initial size
+    if (!cmd->args)
+    {
+        free(cmd);
+        return (NULL);
+    }
+    cmd->args[0] = NULL; 
+    cmd->redirections = NULL;
+    cmd->arg_count = 0;
+    cmd->pipe_next = 0;
+    cmd->next = NULL;
+    return (cmd);
 }
 
 void	add_argument(t_command *cmd, char *arg)

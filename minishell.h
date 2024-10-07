@@ -17,6 +17,7 @@
 #include <readline/history.h>
 #include <errno.h>
 #include "1337Libft/libft.h"
+#define NOT_BUILT_IN -1
 
 extern int g_exit_status;
 
@@ -57,6 +58,38 @@ typedef struct s_command {
     struct s_redirection *redirections;
     struct s_command *next;
 } t_command;
+
+typedef struct s_handle_vars
+{
+    int				start;
+    int				in_single_quotes;
+    int				in_double_quotes;
+    int				escaped;
+    char			*value;
+    t_token_type	type;
+    t_token			*new;
+    t_token			*last_token;
+    char			*expanded_value;
+    char			*final_value;
+}				t_handle_vars;
+typedef struct s_quote_state
+{
+	int	i;
+	int	j;
+	int	in_double_quotes;
+	int	in_single_quotes;
+}	t_quote_state;
+
+typedef struct s_lexer_state
+{
+	t_token	*tokens;
+	int		i;
+	int		len;
+	int		expect_heredoc_delim;
+	int		expect_filename;
+	char	current_char;
+	char	next_char;
+}	t_lexer_state;
 
 typedef struct s_expansion
 {
@@ -190,6 +223,11 @@ char *handle_heredoc(const char *delimiter, int expand_vars);
 
 void handle_command_or_argument(const char *input, int *i, int len, t_token **tokens);  
 void free_tokens(t_token *head);
+void update_current_and_next_char(t_lexer_state *state, const char *input);
+void initialize_state(t_lexer_state *state, const char *input);
+int handle_heredoc_cases(t_lexer_state *state, const char *input);
+int handle_whitespace(t_lexer_state *state);
+int handle_pipe(t_lexer_state *state);
 t_command *new_command();
 void add_argument(t_command *cmd, char *arg);
 void add_redirection(t_command *cmd, int type, char *filename);
@@ -199,6 +237,7 @@ t_command *parse_tokens(t_token *tokens);
 void free_command(t_command *cmd);
 int	get_status(void);
 int validate_syntax(t_token *tokens);
+char	*remove_quotes(const char *str) ;
 char	*remove_single_quotes(const char *str);
 void	handlee_heredoc(int *i, t_token **tokens);
 void	handle_heredoc_delim(const char *input, int *i, int len, t_token **tokens);
@@ -215,5 +254,50 @@ char *remove_enclosing_quotes( char *str);
  void parse_token_three(t_parse_context *ctx, t_token **tokens);
  void parse_token_four(t_parse_context *ctx, t_token **tokens);
  void parse_token_five(t_parse_context *ctx, t_token **tokens);
+ pid_t execute_piped_command(t_command *cmd, int in_fd, int out_fd, char **env);
+
+ void	update_old_pwd(char *old_pwd, char **env);
+void	update_pwd(char *pwd, char **env);
+char	*ft_chr(char **env, char *vrb);
+void    cd(t_command *cmd, char **env);
+int echo(t_command *cmd, char **env);
+int first_non_option(char **args);
+int is_n_option(char *arg);
+void env(t_command *cmd, char **env);
+void handle_pipes(t_command *commands, char **env);
+int	double_pointer_len(char **str);
+void	ft_setter(int value);
+int	ft_getter(void);
+int is_builtin(t_command *cmd);
+int	is_num(char *str);
+void export(t_command *cmd, char **env);
+int check_export(char *cmd);
+void    export_helper(char *cmd, char **env, int len);
+int check_env(char *cmd, char **env);
+void    print_export(char *env);
+int  pwd(t_command *cmd, char **env);
+void unset(t_command *cmd, char **env);
+void unset_helper(char *cmd, char **env, int len);
+size_t length(char *s);
+
+//execution
+void execute_single_cmd(t_command *input, char **env);
+void execute_cmd(char **cmd, char **env);
+void execute_builtin(t_command *cmd, char **env, int index);
+char *get_path(char **cmd, char *envp[]);
+char *check_path(char **cmd, char **path);
+char **ft_free(char **str);
+
+//redirection
+void    ft_redict(t_command *cmd, char **env);
+void redic_not_builtin(t_command *cmd, char **env);
+void redic_builtin(t_command *cmd, char **env);
+void exec_in_child(t_command *cmd, char **env);
+int get_in_v2(t_command *tmp, int fd_in, int index);
+int get_out(t_command *tmp, int fd_out);
+int get_in(t_command *tmp, int fd_in);
+void restore_fd(int in, int out, int new_in, int new_out);
+void dup_in_out(int in, int out);
+
 
 #endif

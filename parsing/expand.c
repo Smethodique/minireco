@@ -51,7 +51,7 @@ char	*expand_env_variable(t_expansion *exp)
 	free(exp->before_env);
 	exp->result = exp->new_result;
 	exp->env_len = 0;
-	while (exp->env_pos[1 + exp->env_len] && (isalnum(exp->env_pos[1 + exp->env_len]) || exp->env_pos[1 + exp->env_len] == '_'))
+	while (exp->env_pos[1 + exp->env_len] && (ft_isalnum(exp->env_pos[1 + exp->env_len]) || exp->env_pos[1 + exp->env_len] == '_'))
 		exp->env_len++;
 	exp->env_name = ft_substr(exp->env_pos + 1, 0, exp->env_len);
 	exp->env_value = getenv(exp->env_name);
@@ -69,18 +69,22 @@ char	*expand_env_variable(t_expansion *exp)
 
 
 
-char	*expand_variables(const char *str)
+void initialize_expansion(t_expansion *exp, const char *str)
+{
+	exp->result = ft_strdup("");
+	exp->in_single_quote = 0;
+	exp->in_double_quote = 0;
+	exp->temp = (char *)str;
+}
+
+char *expand_variables(const char *str)
 {
 	t_expansion exp;
-	printf("str = %s\n", str);
 
-	exp.result = ft_strdup("");
-	exp.in_single_quote = 0;
-	exp.in_double_quote = 0;
-	exp.temp = (char *)str;
+	initialize_expansion(&exp, str);
 	while (*exp.temp)
 	{
-		if (*exp.temp == '\'' || *exp.temp == '"')  
+		if (*exp.temp == '\'' || *exp.temp == '"')
 		{
 			exp.result = process_quotes(&exp);
 			continue;
@@ -96,10 +100,7 @@ char	*expand_variables(const char *str)
 		}
 	}
 	exp.final_result = ft_strdup(exp.result);
-	free(exp.result);
-	
 	exp.unquoted_result = remove_quotes(exp.final_result);
-	free(exp.final_result);
-	return(exp.unquoted_result);
+	return (free(exp.final_result), free(exp.result), exp.unquoted_result);
 }
 

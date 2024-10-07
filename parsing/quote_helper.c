@@ -1,46 +1,7 @@
 #include "../minishell.h"
 #include <string.h> // Add this line to declare strdup
 
-char	*remove_quotes(const char *str)
-{
-	int		len;
-	char	*result;
-	int		j;
-	int		in_double_quotes;
-	int		in_single_quotes;
 
-	len = ft_strlen(str);
-	result = malloc(len + 1);
-	j = 0;
-
-	in_double_quotes = 0;
-	in_single_quotes = 0;
-	if (!result)
-		return (NULL);
-	int i = 0;
-	while (i < len)
-	{
-		if (str[i] == '"')
-		{
-			if (!in_single_quotes)
-				in_double_quotes = !in_double_quotes;
-			else
-				result[j++] = str[i];
-		}
-		else if (str[i] == '\'')
-		{
-			if (!in_double_quotes)
-				in_single_quotes = !in_single_quotes;
-			else
-				result[j++] = str[i];
-		}
-		else
-			result[j++] = str[i];
-		i++;
-	}
-	result[j] = '\0';
-	return (result);
-}
 
 int	is_quoted(const char *str)
 {
@@ -61,19 +22,6 @@ int	is_quoted(const char *str)
 		}
 	}
 	return (in_single_quotes || in_double_quotes);
-}
-char	*remove_enclosing_quotes(char *str)
-{
-	int	len;
-
-	len = strlen(str);
-	if (len >= 2 && ((str[0] == '\'' && str[len - 1] == '\'') || (str[0] == '"'
-				&& str[len - 1] == '"')))
-	{
-		str[len - 1] = '\0';
-		return (str + 1);
-	}
-	return (str);
 }
 
 char	*remove_single_quotes(const char *str)
@@ -99,6 +47,7 @@ char	*remove_single_quotes(const char *str)
 	{
 		free(result);
 		printf("Error: unclosed quote\n");
+		printf("minishell: syntax error\n");
 		g_exit_status = 2 ;
 		
 		return (strdup(str));

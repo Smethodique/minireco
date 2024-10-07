@@ -1,3 +1,4 @@
+#include "../minishell.h"
 
 size_t length(char *s)
 {
@@ -18,7 +19,7 @@ void unset_helper(char *cmd, char **env, int len)
 
     checker = 0;
     env1 = NULL;
-    checker = check_dup_env(cmd, env);
+    checker = check_env(cmd, env);
     if (checker && (length(env[checker]) == length(cmd)))
     {
         env1 = malloc(sizeof(char*) * (len));

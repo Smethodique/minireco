@@ -1,4 +1,4 @@
-#include "minishell.h"  
+#include "../minishell.h"  
 
 //define cntrl c signal handler
 void sigint_handler(int sig)

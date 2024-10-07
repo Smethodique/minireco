@@ -1,7 +1,10 @@
 NAME = minishell
-SRCS =  main.c signals.c parsing/parser.c parsing/util_herdoc.c parsing/quote_handling.c \
+SRCS =  main.c  parsing/parser.c parsing/util_herdoc.c  \
 parsing/parse_token.c parsing/parse_token_norme.c parsing/toknaize.c parsing/quote_helper.c \
 parsing/handle_com_arg.c parsing/lexer.c parsing/handle_env.c parsing/expand.c \
+parsing/quote_helperT.c  parsing/helplexer.c execution/redirect_utils.c execution/exec.c \
+execution/redirect.c builtins/echo.c builtins/cd.c builtins/pwd.c builtins/export.c \
+builtins/builtins.c builtins/env.c execution/signals.c execution/handle_pipe.c \
 
 OBJS = $(SRCS:.c=.o)
 LIBFT = 1337Libft/libft.a

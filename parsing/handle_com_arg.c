@@ -1,18 +1,6 @@
 #include "../minishell.h"
 
-typedef struct s_handle_vars
-{
-    int				start;
-    int				in_single_quotes;
-    int				in_double_quotes;
-    int				escaped;
-    char			*value;
-    t_token_type	type;
-    t_token			*new;
-    t_token			*last_token;
-    char			*expanded_value;
-    char			*final_value;
-}				t_handle_vars;
+
 
 void initialize_handle_vars(t_handle_vars *vars, const char *input, int *i, t_token **tokens)
 {
@@ -62,7 +50,7 @@ void process_value(const char *input, int *i, t_handle_vars *vars, t_token **tok
     free(vars->expanded_value);
     if (!vars->final_value)
         return ;
-    if (*tokens == NULL || vars->last_token->type == PIPE)
+    if (*tokens == NULL || vars->last_token->type == PIPE || vars->last_token->type == FILENAME)
         vars->type = COMMANDE;
     else
         vars->type = ARG;
@@ -71,6 +59,29 @@ void process_value(const char *input, int *i, t_handle_vars *vars, t_token **tok
     add_token(tokens, vars->new);
     free(vars->final_value);
 }
+int	detect_unclosed_quotes(const char *str)
+{
+	int	i;
+	int	in_double_quotes;
+	int	in_single_quotes;
+
+	i = 0;
+	in_double_quotes = 0;
+	in_single_quotes = 0;
+	while (str && str[i])
+	{
+		if (str[i] == '"' && !in_single_quotes)
+			in_double_quotes = !in_double_quotes;
+		else if (str[i] == '\'' && !in_double_quotes)
+			in_single_quotes = !in_single_quotes;
+		i++;
+	}
+	if (in_double_quotes)
+		return (1);  
+	if (in_single_quotes)
+		return (2); 
+	return (0);    
+}
 void handle_command_or_argument(const char *input, int *i, int len, t_token **tokens)
 {
     t_handle_vars vars;
@@ -78,7 +89,7 @@ void handle_command_or_argument(const char *input, int *i, int len, t_token **to
 
     initialize_handle_vars(&vars, input, i, tokens);
     parse_comm(input, i, len, &vars);
-    if (vars.in_single_quotes || vars.in_double_quotes)
+    if (detect_unclosed_quotes(input) == 1 || detect_unclosed_quotes(input) == 2)
     {
         ft_putstr_fd("Error: unclosed quote\n", 2);
         g_exit_status = 2;
