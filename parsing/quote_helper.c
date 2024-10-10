@@ -48,7 +48,7 @@ char	*remove_single_quotes(const char *str)
 		free(result);
 		printf("Error: unclosed quote\n");
 		printf("minishell: syntax error\n");
-		g_exit_status = 2 ;
+		g_vars.exit_status = 2;
 		
 		return (strdup(str));
 	}

@@ -181,16 +181,30 @@ void	add_argument(t_command *cmd, char *arg)
 	cmd->args[cmd->arg_count] = NULL; // Ensure null-termination
 	free(trimmed_arg);
 }
-void	add_redirection(t_command *cmd, int type, char *filename)
+void add_redirection(t_command *cmd, int type, char *filename)
 {
-	t_redirection	*redir;
+    t_redirection *new_red;
+    t_redirection *last;
 
-	redir = malloc(sizeof(t_redirection));
-	redir->type = type;
-	redir->filename = ft_strdup(filename);
-	redir->next = cmd->redirections;
-	cmd->redirections = redir;
+    new_red = malloc(sizeof(t_redirection));
+    if (!new_red)
+        return;
+        
+    new_red->type = type;
+    new_red->filename = strdup(filename);
+    new_red->next = NULL;
+
+    if (!cmd->redirections)
+        cmd->redirections = new_red;
+    else
+    {
+        last = cmd->redirections;
+        while (last->next)
+            last = last->next;
+        last->next = new_red;
+    }
 }
+
 
 void	add_command(t_command **list, t_command *cmd)
 {

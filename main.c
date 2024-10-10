@@ -1,5 +1,6 @@
 #include "minishell.h"
-int g_exit_status;
+t_global_vars g_vars;
+
 
 void init_shell(char **env)
 {
@@ -17,14 +18,12 @@ void init_shell(char **env)
                 t_command *commands = parse_tokens(tokens);
                 if (commands)
                 {
-                    print_command_list(commands);  // Print command list for debugging
-                    
-                    // Check if there are multiple commands (pipes)
+                   
+                    print_command_list(commands);  // Print command list for debuggin
                     if (commands->next)
                         handle_pipes(commands, env);  // Add this function call for pipe handling
                     else
                     {
-                        // Single command execution
                         execute_single_cmd(commands, env);
                     }
                     
@@ -34,7 +33,7 @@ void init_shell(char **env)
             }
             add_history(line);
         }
-        printf("g_exit_status: %d\n", g_exit_status);
+       
         free(line);
     }
 }
@@ -45,9 +44,9 @@ int main(int argc, char **argv, char **env)
     (void)argv;
     
     // Initialize signal handlers
+     g_vars.env = env;
     all_signals();
-    // Initialize shell with environment
     init_shell(env);
     
-    return g_exit_status;
+    return g_vars.exit_status;
 }

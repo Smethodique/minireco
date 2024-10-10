@@ -22,7 +22,7 @@
             ctx->current_command = new_command();
             add_command(&ctx->command_list, ctx->current_command);
         }
-        ctx->env_value = getenv((*tokens)->value + 1);
+        ctx->env_value = get_env_value((*tokens)->value + 1); // Skip the '$'
         if (ctx->env_value)
             add_argument(ctx->current_command, ctx->env_value);
         else
@@ -68,7 +68,7 @@
         ctx->fd = my_mkstemp(ctx->temp_filename);
         if (ctx->heredoc_content)
         {
-            write(ctx->fd, ctx->heredoc_content, strlen(ctx->heredoc_content));
+            write(ctx->fd, ctx->heredoc_content, ft_strlen(ctx->heredoc_content));
             free(ctx->heredoc_content);
         }
         close(ctx->fd);

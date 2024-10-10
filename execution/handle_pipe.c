@@ -145,9 +145,9 @@ void handle_pipes(t_command *commands, char **env)
         if (i == pipe_count - 1)
         {
             if (WIFEXITED(status))
-                g_exit_status = WEXITSTATUS(status);
+                 g_vars.exit_status = WEXITSTATUS(status);
             else if (WIFSIGNALED(status))
-                g_exit_status = 128 + WTERMSIG(status);
+                 g_vars.exit_status = 128 + WTERMSIG(status);
         }
     }
     

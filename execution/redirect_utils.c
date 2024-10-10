@@ -28,27 +28,39 @@ void restore_fd(int in, int out, int new_in, int new_out)
     }
 }
 
-int get_in(t_command *tmp, int fd_in)
+int get_in(t_command *cmd, int fd_in)
 {
-    t_redirection *tmp1;
+    t_redirection *redir = cmd->redirections;
     
-    tmp1 = tmp->redirections;
-    while (tmp1)
+    while (redir)
     {
-        if (tmp1->type == INPUT && tmp1->filename)  // Changed from '<' to INPUT
-            fd_in = open(tmp1->filename, O_RDONLY);
-        else if (tmp1->type == HEREDOC)  // Changed from checking delimiter to HEREDOC type
+        if (fd_in > 0)
+            close(fd_in);  // Close previous fd if exists
+            
+        if (redir->type == INPUT)
         {
-            char *temp_filename = ft_strjoin("minishell_", ft_itoa(0));
-            int fd = open(temp_filename, O_RDWR);
-            free(temp_filename);
-            if (fd != -1)
-                fd_in = fd;
+            fd_in = open(redir->filename, O_RDONLY);
+            if (fd_in == -1)
+            {
+                ft_putstr_fd("minishell: ", 2);
+                perror(redir->filename);
+                return -1;
+            }
         }
-        tmp1 = tmp1->next;
+        else if (redir->type == HEREDOC)
+        {
+            fd_in = open(redir->filename, O_RDONLY);
+            if (fd_in == -1)
+            {
+                ft_putstr_fd("minishell: cannot open heredoc temp file\n", 2);
+                return -1;
+            }
+        }
+        redir = redir->next;
     }
     return fd_in;
 }
+
 
 int get_out(t_command *tmp, int fd_out)
 {

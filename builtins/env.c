@@ -103,44 +103,18 @@ int check_dup_env(char *cmd, char **env)
 void unset_helper(char *cmd, char **env, int len)
 {
     int checker;
-    char **env1;
     int i;
-    int j;
 
-    checker = 0;
-    env1 = NULL;
     checker = check_dup_env(cmd, env);
     if (checker && (length(env[checker]) == length(cmd)))
     {
-        env1 = malloc(sizeof(char*) * len);
-        if (!env1)
+        i = checker;
+        while (i < len - 1)
         {
-            ft_putstr_fd("minishell: memory allocation error\n", 2);
-            return;
-        }
-        i = 0;
-        j = 0;
-        while (i < len)
-        {
-            if (i >= checker && i != (len - 1))
-            {
-                j++;
-                env1[i] = ft_strdup(env[j]);
-            }
-            else if (i == (len - 1))
-                env1[i] = NULL;
-            while (env1[++i])
-            {
-                free(env[i]);
-                env[i] = ft_strdup(env1[i]);
-            }
+            env[i] = env[i + 1];
             i++;
-        }       
-        i = -1;
-        while (env1[++i])
-            env[i] = ft_strdup(env1[i]);
-        env[i] = NULL;
-        ft_free(env1);
+        }
+        env[len - 1] = NULL;
     }
 }
 

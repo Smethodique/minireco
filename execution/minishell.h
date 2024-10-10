@@ -19,6 +19,12 @@
 #include "1337Libft/libft.h"
 #define NOT_BUILT_IN -1
 
+typedef struct s_env {
+    char *key;
+    char *value;
+    struct s_env *next;
+} t_env;
+
 typedef struct s_global_vars {
     int exit_status;
     char **env;
@@ -281,7 +287,7 @@ void    export_helper(char *cmd, char **env, int len);
 int check_env(char *cmd, char **env);
 void    print_export(char *env);
 int  pwd(t_command *cmd, char **env);
-void unset(t_command *cmd, char **env);
+void unset(t_command *cmd, t_env **env);
 void unset_helper(char *cmd, char **env, int len);
 char *get_env_value(char *name);
 size_t length(char *s);

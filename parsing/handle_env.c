@@ -7,7 +7,7 @@ void handle_env_var_value(char *env_var, t_token **tokens)
 
     if (env_var[1] == '?')
     {
-        char *exit_status_str = ft_itoa(g_exit_status);
+        char *exit_status_str = ft_itoa(g_vars.exit_status);
         t_token *new_tok = new_token(ARG, exit_status_str);
         add_token(tokens, new_tok);
         free(exit_status_str);
@@ -15,7 +15,7 @@ void handle_env_var_value(char *env_var, t_token **tokens)
     }
     else
     {
-        data.env_value = getenv(env_var + 1); // +1 to skip the '$'
+        data.env_value = get_env_value(env_var + 1); // +1 to skip the '$'
         if (data.env_value)
         {
             if (is_quoted(data.env_value))

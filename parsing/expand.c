@@ -17,16 +17,7 @@ char	*ft_strjoin_char(char *s, char c)
 
 char *process_quotes(t_expansion *exp)
 {
-    if (*exp->temp == '\'') // Handle single quotes
-    {
-        if (exp->in_double_quote == 0) // Only toggle if not inside double quotes
-        {
-            exp->in_single_quote = !exp->in_single_quote;
-        }
-        exp->new_result = ft_strjoin_char(exp->result, *exp->temp); 
-		
-    }
-    else if (*exp->temp == '"') 
+    if (*exp->temp == '"') 
     {
         if (exp->in_single_quote == 0) 
             exp->in_double_quote = !exp->in_double_quote;
@@ -40,9 +31,23 @@ char *process_quotes(t_expansion *exp)
     return (exp->result);
 }
 
+char *get_env_value(char *name)
+{
+	int i = 0;
+	size_t name_len = ft_strlen(name);
+	
+	if (!name || !g_vars.env)
+		return NULL;
+	while (g_vars.env[i])
+	{
+		if (ft_strncmp(g_vars.env[i], name, name_len) == 0 && g_vars.env[i][name_len] == '=')
+			return (g_vars.env[i] + name_len + 1);
+		i++;
+	}
+	return NULL;
+}
 
-
-char	*expand_env_variable(t_expansion *exp)
+char	*expand_env_variable(t_expansion *exp  )
 {
 
 	exp->before_env = ft_substr(exp->temp, 0, exp->env_pos - exp->temp);
@@ -54,7 +59,7 @@ char	*expand_env_variable(t_expansion *exp)
 	while (exp->env_pos[1 + exp->env_len] && (ft_isalnum(exp->env_pos[1 + exp->env_len]) || exp->env_pos[1 + exp->env_len] == '_'))
 		exp->env_len++;
 	exp->env_name = ft_substr(exp->env_pos + 1, 0, exp->env_len);
-	exp->env_value = getenv(exp->env_name);
+	exp->env_value =get_env_value(exp->env_name);
 	free(exp->env_name);
 	if (exp->env_value)
 	{
@@ -84,7 +89,7 @@ char *expand_variables(const char *str)
 	initialize_expansion(&exp, str);
 	while (*exp.temp)
 	{
-		if (*exp.temp == '\'' || *exp.temp == '"')
+		if ( *exp.temp == '"')
 		{
 			exp.result = process_quotes(&exp);
 			continue;

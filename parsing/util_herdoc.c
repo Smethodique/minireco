@@ -78,14 +78,14 @@ char *expand_env_vars(char *input) {
             ft_strncpy(var_name, var_start, var_name_len);
             var_name[var_name_len] = '\0';
 
-            const char *var_value = getenv(var_name);
+            const char *var_value = get_env_value(var_name);
             free(var_name);
 
             if (var_value) {
                 size_t value_len = ft_strlen(var_value);
                 if (result_len + value_len >= result_cap) {
                     result_cap = (result_len + value_len) * 2;
-                    char *new_result = realloc(result, result_cap);
+                    char *new_result = malloc(result_cap);
                     if (!new_result) {
                         free(result);
                         return NULL;
@@ -140,7 +140,6 @@ char *handle_heredoc(const char *delimiter, int expand_vars)
     size_t content_capacity = 0;
 
     while (1) {
-        // add cntrl c signal to exit just from herdoc not all
         signal(SIGINT, sigint_handlerh);
         line = readline("> ");
         if (!line) {
@@ -168,7 +167,7 @@ char *handle_heredoc(const char *delimiter, int expand_vars)
 
         if (new_size > content_capacity) {
             content_capacity = new_size * 2; // Double the capacity
-            char *new_content = realloc(content, content_capacity);
+            char *new_content = malloc(content_capacity);
             if (!new_content) {
                 free(line);
                 if (expand_vars && processed_line != line) free(processed_line);

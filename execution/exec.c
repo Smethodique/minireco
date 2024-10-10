@@ -14,6 +14,7 @@ char **ft_free(char **str)
     return (NULL);
 }
 
+
 char *check_path(char **cmd, char **path)
 {
     int i;
@@ -21,7 +22,7 @@ char *check_path(char **cmd, char **path)
     char *new_path;
 
     i = 0;
-    while (path[i++])
+    while (path[i])
     {
         new_cmd = ft_strjoin("/", cmd[0]);
         new_path = ft_strjoin(path[i], new_cmd);
@@ -32,6 +33,7 @@ char *check_path(char **cmd, char **path)
             return (new_path);
         }
         free(new_path);
+        i++;
     }
     ft_free(path);
     return (ft_strdup(cmd[0]));
@@ -74,9 +76,9 @@ void execute_cmd(char **cmd, char **env)
     {
         waitpid(pid, &status, 0);
         if (WIFEXITED(status))
-            g_exit_status = WEXITSTATUS(status);
+            g_vars.exit_status = WEXITSTATUS(status);
         else
-            g_exit_status = 128 + WTERMSIG(status);
+             g_vars.exit_status = 128 + WTERMSIG(status);
     }
 }
 
@@ -91,7 +93,7 @@ void execute_single_cmd(t_command *cmd, char **env)
 
     if (cmd == NULL || cmd->args == NULL || cmd->args[0] == NULL)
         return;
-
+     all_signals();
     cmd_type = is_builtin(cmd);
     if (cmd->redirections)
         ft_redict(cmd, env);

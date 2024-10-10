@@ -50,7 +50,7 @@ void process_value(const char *input, int *i, t_handle_vars *vars, t_token **tok
     free(vars->expanded_value);
     if (!vars->final_value)
         return ;
-    if (*tokens == NULL || vars->last_token->type == PIPE || vars->last_token->type == FILENAME)
+    if (*tokens == NULL || vars->last_token->type == PIPE || vars->last_token->type == FILENAME || vars->last_token->type == DELIMITER )
         vars->type = COMMANDE;
     else
         vars->type = ARG;
@@ -92,7 +92,7 @@ void handle_command_or_argument(const char *input, int *i, int len, t_token **to
     if (detect_unclosed_quotes(input) == 1 || detect_unclosed_quotes(input) == 2)
     {
         ft_putstr_fd("Error: unclosed quote\n", 2);
-        g_exit_status = 2;
+        g_vars.exit_status= 2;
         free_tokens(*tokens);
         *tokens = NULL;
         return ;

@@ -35,6 +35,9 @@ int echo (t_command *cmd, char **env)
         i++;
     }
     if (first_non_option(cmd->args) == 1)
+    {
         printf("\n");
+        g_vars.exit_status = 0;
+    }
     return 0;
 }
