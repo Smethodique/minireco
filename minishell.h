@@ -112,6 +112,20 @@ typedef struct s_expansion
 	char	*unquoted_result;
 }	t_expansion;
 
+typedef struct s_heredoc
+{
+    char    *unquoted_delimiter;
+    int     is_quoted;
+    char    *line;
+    char    *content;
+    size_t  content_size;
+    size_t  content_capacity;
+    char    *processed_line;
+    size_t  line_len;
+    size_t  new_size;
+    char    *new_content;
+} t_heredoc;
+
 typedef struct s_redirection {
     int type;  // INPUT, OUTPUT, or APPEND
     char *filename;
@@ -224,8 +238,7 @@ char	*expand_variables(const char *str);
 
 
 char *handle_heredoc(const char *delimiter, int expand_vars);
-
-
+int	ft_isspace(char c);
 void handle_command_or_argument(const char *input, int *i, int len, t_token **tokens);  
 void free_tokens(t_token *head);
 void update_current_and_next_char(t_lexer_state *state, const char *input);
@@ -234,10 +247,32 @@ int handle_heredoc_cases(t_lexer_state *state, const char *input);
 int handle_whitespace(t_lexer_state *state);
 int handle_pipe(t_lexer_state *state);
 t_command *new_command();
+int myrand(void);
+int create_temp_file(char *template);
+int my_mkstemp(char *template);
+char *allocate_result(size_t capacity);
+char *extract_var_name(char **p);
+char *expand_variable(char **result, size_t *result_len, size_t *result_cap, const char *var_value);
+char *append_char(char *result, size_t *result_len, size_t *result_cap, char c);
+char *expand_env_vars(char *input);
+char *handle_variable_expansion(char **p, char *result, size_t *result_len, size_t *result_cap);
+void sigint_handlerh(int sig);
+void initialize_heredoc(t_heredoc *hdoc, const char *delimiter);
+char *process_line(t_heredoc *hdoc, int expand_vars);
+int resize_content_if_needed(t_heredoc *hdoc);
+void append_line_to_content(t_heredoc *hdoc);
+char *handle_heredoc(const char *delimiter, int expand_vars);
+int read_and_process_line(t_heredoc *hdoc, int expand_vars);
+void cleanup_heredoc(t_heredoc *hdoc);
+int read_and_process_line(t_heredoc *hdoc, int expand_vars);
 void add_argument(t_command *cmd, char *arg);
 void add_redirection(t_command *cmd, int type, char *filename);
 char	*expand_variables(const char *str);
 void add_command(t_command **list, t_command *cmd);
+char	*ft_strjoin_char(char *s, char c);
+char *process_quotes(t_expansion *exp);
+int read_and_process_line(t_heredoc *hdoc, int expand_vars);
+
 t_command *parse_tokens(t_token *tokens);
 void free_command(t_command *cmd);
 int	get_status(void);
