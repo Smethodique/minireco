@@ -11,19 +11,18 @@ int ft_isalnum(int c)
 	return (ft_isalpha(c) || ft_isdigit(c));
 }
 
-
-void	handlee_heredoc(int *i, t_token **tokens)
+void handlee_heredoc(int *i, t_token **tokens)
 {
 	add_token(tokens, new_token(HEREDOC, "<<"));
 	*i += 2;
 }
 
 // Function to handle heredoc delimiter
-void	handle_heredoc_delim(const char *input, int *i, int len,
-		t_token **tokens)
+void handle_heredoc_delim(const char *input, int *i, int len,
+						  t_token **tokens)
 {
-	int		start;
-	char	*delimiter;
+	int start;
+	char *delimiter;
 
 	while (*i < len && isspace(input[*i]))
 	{
@@ -39,19 +38,10 @@ void	handle_heredoc_delim(const char *input, int *i, int len,
 	free(delimiter);
 }
 
-
 // Function to handle quotes
 
-
-
-
-
-
-
-
-
-void	handle_redirections(int *i, t_redirection_chars chars,
-		t_token **tokens, int *expect_filename)
+void handle_redirections(int *i, t_redirection_chars chars,
+						 t_token **tokens, int *expect_filename)
 {
 	if (chars.current_char == '<')
 	{
@@ -73,15 +63,13 @@ void	handle_redirections(int *i, t_redirection_chars chars,
 }
 
 // Function to handle filenames
-void	handle_filename(const char *input, int *i, int len, t_token **tokens)
+void handle_filename(const char *input, int *i, int len, t_token **tokens)
 {
-	int		start;
-	char	*filename;
+	int start;
+	char *filename;
 
 	start = *i;
-	while (*i < len && !isspace(input[*i]) && input[*i] != '|'
-		&& input[*i] != '<' && input[*i] != '>' && input[*i] != '\''
-		&& input[*i] != '"')
+	while (*i < len && !isspace(input[*i]) && input[*i] != '|' && input[*i] != '<' && input[*i] != '>' && input[*i] != '\'' && input[*i] != '"')
 	{
 		(*i)++;
 	}
@@ -92,86 +80,75 @@ void	handle_filename(const char *input, int *i, int len, t_token **tokens)
 
 // Function to handle environment variables
 
-
-
-
 // Function to handle commands and arguments
-
-
-
-
 
 void concatinate(t_token **tokens)
 {
-    t_token *current = *tokens;
-    t_token *next;
-    char *new_value;
-          ;
-    while (current && current->next)
-    {
-		
-        next = current->next;
-		
-        if ((current->type == ARG || current->type == COMMANDE) &&
-            (next->type == ARG || next->type == COMMANDE ) &&
-            !current->space)
-        {
-			
-            new_value = malloc(strlen(current->value) + ft_strlen(next->value) + 1);
+	t_token *current = *tokens;
+	t_token *next;
+	char *new_value;
+	;
+	while (current && current->next)
+	{
 
-            if (!new_value)
-                return;
-            ft_strcpy(new_value, current->value);
-            ft_strcat(new_value, next->value);
-            free(current->value);
-            current->value = new_value;
-            current->next = next->next;
-            current->space = next->space; 
-            free(next->value);
-            free(next);
-            if (!current->next) 
-                break;
-        }
-        else
-            current = current->next;
-    }
-	
-	
+		next = current->next;
+
+		if ((current->type == ARG || current->type == COMMANDE) &&
+			(next->type == ARG || next->type == COMMANDE) &&
+			!current->space)
+		{
+
+			new_value = malloc(strlen(current->value) + ft_strlen(next->value) + 1);
+
+			if (!new_value)
+				return;
+			ft_strcpy(new_value, current->value);
+			ft_strcat(new_value, next->value);
+			free(current->value);
+			current->value = new_value;
+			current->next = next->next;
+			current->space = next->space;
+			free(next->value);
+			free(next);
+			if (!current->next)
+				break;
+		}
+		else
+			current = current->next;
+	}
 }
-
-
 
 t_command *new_command(void)
 {
-    t_command *cmd;
+	t_command *cmd;
 
-    cmd = (t_command *)malloc(sizeof(t_command));
-    if (!cmd)
-        return (NULL);
-    cmd->name = NULL;
-    cmd->args = (char **)malloc(sizeof(char *) * 1024);  // Reasonable initial size
-    if (!cmd->args)
-    {
-        free(cmd);
-        return (NULL);
-    }
-    cmd->args[0] = NULL; 
-    cmd->redirections = NULL;
-    cmd->arg_count = 0;
-    cmd->pipe_next = 0;
-    cmd->next = NULL;
-    return (cmd);
+	cmd = (t_command *)malloc(sizeof(t_command));
+	if (!cmd)
+		return (NULL);
+	cmd->name = NULL;
+	cmd->args = (char **)malloc(sizeof(char *) * 1024); // Reasonable initial size
+	if (!cmd->args)
+	{
+		free(cmd);
+		return (NULL);
+	}
+	cmd->args[0] = NULL;
+	cmd->redirections = NULL;
+	cmd->arg_count = 0;
+	cmd->pipe_next = 0;
+	cmd->next = NULL;
+	return (cmd);
 }
 
-void	add_argument(t_command *cmd, char *arg)
+void add_argument(t_command *cmd, char *arg)
 {
-	char	*trimmed_arg;
+	char *trimmed_arg;
 
 	trimmed_arg = ft_strtrim(arg, " \t");
 	if (trimmed_arg == NULL)
 	{
 		// Handle memory allocation error
-		return ;
+		return;
 	}
 	if (cmd->arg_count == 0)
 	{
@@ -183,32 +160,31 @@ void	add_argument(t_command *cmd, char *arg)
 }
 void add_redirection(t_command *cmd, int type, char *filename)
 {
-    t_redirection *new_red;
-    t_redirection *last;
+	t_redirection *new_red;
+	t_redirection *last;
 
-    new_red = malloc(sizeof(t_redirection));
-    if (!new_red)
-        return;
-        
-    new_red->type = type;
-    new_red->filename = strdup(filename);
-    new_red->next = NULL;
+	new_red = malloc(sizeof(t_redirection));
+	if (!new_red)
+		return;
 
-    if (!cmd->redirections)
-        cmd->redirections = new_red;
-    else
-    {
-        last = cmd->redirections;
-        while (last->next)
-            last = last->next;
-        last->next = new_red;
-    }
+	new_red->type = type;
+	new_red->filename = strdup(filename);
+	new_red->next = NULL;
+
+	if (!cmd->redirections)
+		cmd->redirections = new_red;
+	else
+	{
+		last = cmd->redirections;
+		while (last->next)
+			last = last->next;
+		last->next = new_red;
+	}
 }
 
-
-void	add_command(t_command **list, t_command *cmd)
+void add_command(t_command **list, t_command *cmd)
 {
-	t_command	*current;
+	t_command *current;
 
 	if (*list == NULL)
 	{
@@ -225,30 +201,27 @@ void	add_command(t_command **list, t_command *cmd)
 	}
 }
 
-
-void	print_tokens(t_token *tokens)
+void print_tokens(t_token *tokens)
 {
 	while (tokens)
 	{
-		//print type and value
+		// print type and value
 		printf("Type: %d, Value: %s\n", tokens->type, tokens->value);
 		tokens = tokens->next;
 	}
 }
+
 int check_heredoc_delim(t_token *tokens)
 {
-	// Check if the token after HEREDOC is PIPE, OUTPUT, INPUT, APPEND, or another HEREDOC
 	while (tokens)
 	{
 		if (tokens->type == HEREDOC)
 		{
-			if (tokens->next && (strcmp(tokens->next->value, "<") == 0 || 
-			strcmp(tokens->next->value, ">") == 0 ||
-			 strcmp(tokens->next->value, ">>") == 0 ||
-			  strcmp(tokens->next->value, "<<") == 0 || 
-			  strcmp(tokens->next->value, "|") == 0))		
-			  {
-
+			if (!tokens->next ||
+				(ft_strcmp(tokens->next->value, "<") == 0 || ft_strcmp(tokens->next->value, ">") == 0 ||
+				 ft_strcmp(tokens->next->value, ">>") == 0 || ft_strcmp(tokens->next->value, "<<") == 0 ||
+				 ft_strcmp(tokens->next->value, "|") == 0) || ft_strcmp(tokens->next->value, "") == 0 )
+			{
 				return 0;
 			}
 		}
@@ -257,10 +230,10 @@ int check_heredoc_delim(t_token *tokens)
 	return 1;
 }
 
-void	free_command(t_command *cmd)
+void free_command(t_command *cmd)
 {
-	t_redirection	*redir;
-	t_redirection	*next;
+	t_redirection *redir;
+	t_redirection *next;
 
 	if (cmd->name)
 		free(cmd->name);
@@ -280,9 +253,9 @@ void	free_command(t_command *cmd)
 	free(cmd);
 }
 
-void	free_command_list(t_command *list)
+void free_command_list(t_command *list)
 {
-	t_command	*next;
+	t_command *next;
 
 	while (list)
 	{
@@ -292,9 +265,9 @@ void	free_command_list(t_command *list)
 	}
 }
 
-void	print_command_list(t_command *list)
+void print_command_list(t_command *list)
 {
-	t_redirection	*redir;
+	t_redirection *redir;
 
 	while (list)
 	{
@@ -309,9 +282,9 @@ void	print_command_list(t_command *list)
 		while (redir)
 		{
 			printf("Redirection: %s -> %s\n",
-					redir->type == INPUT ? "INPUT" : redir->type == OUTPUT ? "OUTPUT"
-																			: "APPEND",
-					redir->filename);
+				   redir->type == INPUT ? "INPUT" : redir->type == OUTPUT ? "OUTPUT"
+																		  : "APPEND",
+				   redir->filename);
 			redir = redir->next;
 		}
 		if (list->pipe_next)

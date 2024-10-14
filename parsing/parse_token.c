@@ -20,7 +20,7 @@ static int check_token(t_token **current, int *command_count, int *redirection_c
              || (*current)->type == INPUT || (*current)->type == HEREDOC)
     {
         if (!(*current)->next)
-            return (ft_putstr_fd("Error: Missing filename after redirection\n", 2), 0);
+            return (ft_putstr_fd("Error: Missing filename after redirection OR delimiter after herdoc \n", 2), 0);
         if ((*current)->type != HEREDOC && (*current)->next->type != FILENAME)
             return (ft_putstr_fd("Error: Missing filename after redirection\n", 2), 0);
         *current = (*current)->next;

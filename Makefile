@@ -1,10 +1,11 @@
 NAME = minishell
-SRCS =  main.c  parsing/parser.c parsing/util_herdoc.c  \
+SRCS =  main.c  parsing/parser.c herdoc/util_herdoc.c  \
 parsing/parse_token.c parsing/parse_token_norme.c parsing/toknaize.c parsing/quote_helper.c \
 parsing/handle_com_arg.c parsing/lexer.c parsing/handle_env.c parsing/expand.c \
 parsing/quote_helperT.c  parsing/helplexer.c execution/redirect_utils.c execution/exec.c \
 execution/redirect.c builtins/echo.c builtins/cd.c builtins/pwd.c builtins/export.c \
-builtins/builtins.c builtins/env.c execution/signals.c execution/handle_pipe.c \
+builtins/builtins.c builtins/env.c execution/signals.c execution/handle_pipe.c      \
+herdoc/expande_her.c herdoc/herdoc_one.c
 
 
 OBJS = $(SRCS:.c=.o)
