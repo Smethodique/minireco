@@ -3,8 +3,10 @@
 int is_n_option(char *arg)
 {
     int i = 0;
-    if (arg[i] == '-' && arg[i + 1] == 'n')
+    if (arg && arg[i] == '-' && arg[i + 1] == 'n')
         i += 2;
+         else if(!arg)
+          return 2;
     else
         return 0;
     while (arg[i]) {
@@ -27,17 +29,17 @@ int echo (t_command *cmd, char **env)
 {
     (void)env;
     int i = first_non_option(cmd->args);
+    if (is_n_option(cmd->args[i]) == 2)
+        return 0;
     while (cmd->args[i])
     {
-        printf("%s", cmd->args[i]);
+        ft_putstr_fd(cmd->args[i], 1);
         if (cmd->args[i + 1])
-            printf(" ");
+            ft_putstr_fd(" ", 1);
         i++;
     }
-    if (first_non_option(cmd->args) == 1)
-    {
-        printf("\n");
-        g_vars.exit_status = 0;
-    }
+    if (!is_n_option(cmd->args[1]))
+        ft_putstr_fd("\n", 1);
     return 0;
+
 }
