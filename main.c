@@ -19,10 +19,13 @@ void	init_shell(char **env)
 			tokens = tokenize_input(line);
 			if (tokens)
 			{
-				print_tokens(tokens); // Print tokens for debugging
+				print_tokens(tokens); 
+				
+				
 				commands = parse_tokens(tokens);
 				if (commands)
 				{
+					
 					print_command_list(commands);
 						// Print command list for debuggin
 					if (commands->next)
