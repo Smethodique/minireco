@@ -3,11 +3,13 @@
 #include <stddef.h>
 #include <stdio.h>
 
-void	sigint_handlerh(int sig)
+void sigint_handlerh(int signum)
 {
-	(void)sig;
-	exit(0);
-	return ;
+    (void)signum;
+    g_vars.heredoc_interrupted = 1 ;  // Set flag to indicate interruption
+    write(1, "\n", 1);  // Print a newline to avoid terminal corruption
+    rl_replace_line("", 0);  // Clear the current input line
+    rl_done = 1;  // Force readline to return immediately
 }
 
 
@@ -65,31 +67,44 @@ int	realloc_content(t_heredoc *hd)
 	return (1);
 }
 
-char	*handle_heredoc(const char *delimiter, int expand_vars)
-{
-	t_heredoc	hd;
 
-	init_heredoc(&hd, delimiter, expand_vars);
-	while (1)
-	{
-		signal(SIGINT, sigint_handlerh);
-		hd.line = readline("> ");
-		if (!hd.line)
-			break ;
-		if (ft_strcmp(hd.line, hd.unquoted_delimiter) == 0)
-		{
-			free(hd.line);
-			break ;
-		}
-		if (!process_line(&hd) || !realloc_content(&hd))
-			return (NULL);
-		ft_strcpy(hd.content + hd.content_size, hd.processed_line);
-		hd.content_size += hd.line_len;
-		hd.content[hd.content_size++] = '\n';
-		if (hd.expand_vars && hd.processed_line != hd.line)
-			free(hd.processed_line);
-	}
-	if (hd.content)
-		hd.content[hd.content_size] = '\0';
-	return (free(hd.unquoted_delimiter),hd.content);
+char *handle_heredoc(const char *delimiter, int expand_vars)
+{
+    t_heredoc hd;
+    void (*prev_handler)(int);  // To store the old signal handler
+
+    // Set custom SIGINT handler for heredoc and save the previous one
+     g_vars.heredoc_interrupted = 0;  // Reset the flag
+    prev_handler = signal(SIGINT, sigint_handlerh);
+
+    init_heredoc(&hd, delimiter, expand_vars);
+    while (1)
+    {
+        if ( g_vars.heredoc_interrupted)  
+        {
+            free(hd.line);
+            break;
+        }
+        hd.line = readline("> ");
+        if (!hd.line)  
+            break; // EOF CNTL-D	
+        if (ft_strcmp(hd.line, hd.unquoted_delimiter) == 0)
+        {
+            free(hd.line);
+            break;
+        }
+        if (!process_line(&hd) || !realloc_content(&hd))
+            break;
+        ft_strcpy(hd.content + hd.content_size, hd.processed_line);
+        hd.content_size += hd.line_len;
+        hd.content[hd.content_size++] = '\n';
+        if (hd.expand_vars && hd.processed_line != hd.line)
+            free(hd.processed_line);
+    }
+    if (hd.content)
+        hd.content[hd.content_size] = '\0';
+    signal(SIGINT, prev_handler);
+    if ( g_vars.heredoc_interrupted)
+        return NULL;
+    return hd.content;
 }

@@ -2,6 +2,7 @@
 
 t_global_vars	g_vars;
 
+
 void	init_shell(char **env)
 {
 	char		*line;
@@ -43,8 +44,10 @@ void	init_shell(char **env)
 
 int	main(int argc, char **argv, char **env)
 {
+
 	(void)argc;
 	(void)argv;
+
 	g_vars.env = env;
 	all_signals();
 	init_shell(env);

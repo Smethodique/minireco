@@ -59,11 +59,10 @@
             add_command(&ctx->command_list, ctx->current_command);
         }
         if (!(*tokens)->next || (*tokens)->next->type != DELIMITER)
-        {
-            ft_putstr_fd("Error: Missing delimiter after heredoc\n", 2);
             return;
-        }
         ctx->heredoc_content = handle_heredoc((*tokens)->next->value, 1);
+              if(g_vars.heredoc_interrupted) 
+                      return;
         ft_strcpy(ctx->temp_filename, "/tmp/minishell_heredocXXXXXX");
         ctx->fd = my_mkstemp(ctx->temp_filename);
         if (ctx->heredoc_content)
@@ -73,7 +72,7 @@
         }
         close(ctx->fd);
         add_redirection(ctx->current_command, HEREDOC, ctx->temp_filename);
-        *tokens = (*tokens)->next; // Skip the delimiter token
+        *tokens = (*tokens)->next; 
     }
 }
 

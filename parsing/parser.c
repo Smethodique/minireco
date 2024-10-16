@@ -87,19 +87,14 @@ void concatinate(t_token **tokens)
 	t_token *current = *tokens;
 	t_token *next;
 	char *new_value;
-	;
 	while (current && current->next)
 	{
-
 		next = current->next;
-
 		if ((current->type == ARG || current->type == COMMANDE) &&
 			(next->type == ARG || next->type == COMMANDE) &&
 			!current->space)
 		{
-
 			new_value = malloc(strlen(current->value) + ft_strlen(next->value) + 1);
-
 			if (!new_value)
 				return;
 			ft_strcpy(new_value, current->value);

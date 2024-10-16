@@ -55,13 +55,9 @@ t_command *parse_tokens(t_token *tokens)
 
     ctx.command_list = NULL;
     ctx.current_command = NULL;
-    if (!validate_syntax(tokens))
+    if (check_heredoc_delim(tokens) == 0 ||!validate_syntax(tokens))
     {
-        return (NULL);
-    }
-    if (check_heredoc_delim(tokens) == 0)
-    {
-        ft_putstr_fd("Error: Invalid delimiter after heredoc\n", 2);
+        ft_putstr_fd("Error: Invalid syntax\n", 2);
         return (NULL);
     }
     while (tokens)
@@ -70,8 +66,14 @@ t_command *parse_tokens(t_token *tokens)
         parse_token_two(&ctx, &tokens);
         parse_token_three(&ctx, &tokens);
         parse_token_four(&ctx, &tokens);
-        parse_token_five(&ctx, &tokens);
-        tokens = tokens->next;
+        if (tokens)
+        {
+            parse_token_five(&ctx, &tokens);
+            if (g_vars.heredoc_interrupted)
+                return ctx.command_list;
+        }
+        if (tokens)
+            tokens = tokens->next;
     }
     return (ctx.command_list);
 }

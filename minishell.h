@@ -23,6 +23,7 @@ typedef struct s_global_vars
 {
 	int						exit_status;
 	char					**env;
+	int						heredoc_interrupted;
 }							t_global_vars;
 
 extern t_global_vars		g_vars;
@@ -46,6 +47,7 @@ typedef enum
 	EXIT,
 
 }							t_token_type;
+
 
 typedef struct s_token
 {
