@@ -15,7 +15,7 @@ void handle_env_var_value(char *env_var, t_token **tokens)
     }
     else
     {
-        data.env_value = get_env_value(env_var + 1); // +1 to skip the '$'
+        data.env_value = get_env_value(env_var + 1,g_vars.env); // +1 to skip the '$'
         if (data.env_value)
         {
             if (is_quoted(data.env_value))

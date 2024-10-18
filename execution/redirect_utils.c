@@ -34,23 +34,25 @@ int get_out(t_command *cmd, int fd_out)
     
     while (redir)
     {
-        if (redir->type == OUTPUT)
+        if (redir->type == OUTPUT || redir->type == APPEND)
         {
             if (new_fd != fd_out)
                 close(new_fd);
-            new_fd = open(redir->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            
+            if (redir->type == OUTPUT)
+                new_fd = open(redir->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            else // APPEND
+                new_fd = open(redir->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+            
             if (new_fd == -1)
-            return (ft_putstr_fd("minishell: ", 2),perror(redir->filename),-1);
-        }
-        else if (redir->type == APPEND)
-        {
-            if (new_fd != fd_out)
-                close(new_fd);
-            new_fd = open(redir->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-            if (new_fd == -1)
-            return (ft_putstr_fd("minishell: ", 2),perror(redir->filename),-1);
+            {
+                ft_putstr_fd("minishell: ", 2);
+                perror(redir->filename);
+                return -1;
+            }
         }
         redir = redir->next;
     }
+    
     return new_fd;
 }

@@ -294,9 +294,9 @@ size_t length(char *s);
 
 //execution
 void execute_single_cmd(t_command *input, char **env);
-void execute_cmd(char **cmd, char **env);
+execute_cmd(char **cmd, char **env );
 void execute_builtin(t_command *cmd, char **env, int index);
-char *get_path(char **cmd, char *envp[]);
+char *get_path(char **cmd);
 char *check_path(char **cmd, char **path);
 char **ft_free(char **str);
 

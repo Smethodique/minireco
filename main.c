@@ -45,6 +45,28 @@ void	init_shell(char **env)
 	}
 }
 
+
+char **create_env()
+{
+   
+      char **env = malloc(sizeof(char *) * 5);  // 4 variables + NULL terminator
+    char cwd[1024];
+
+    if (getcwd(cwd, sizeof(cwd)) == NULL) {
+        perror("getcwd() error");
+        return NULL;
+    }
+
+    env[0] = ft_strjoin("PWD=", cwd);
+    env[1] = ft_strdup("SHLVL=1");
+    env[2] = ft_strdup("_=./minishell");
+    env[3] = ft_strdup("PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
+    env[4] = NULL;
+
+    return env;
+}
+	
+
 int	main(int argc, char **argv, char **env)
 {
 
@@ -52,6 +74,10 @@ int	main(int argc, char **argv, char **env)
 	(void)argv;
 
 	g_vars.env = env;
+	if(env == NULL || env[0] == NULL)
+	{
+		env = create_env();
+	}
 	all_signals();
 	init_shell(env);
 

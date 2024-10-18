@@ -41,9 +41,9 @@ void    execute_builtin(t_command *cmd, char **environment, int index)
 	if (index == 0)
 		cd(cmd, environment);
 	else if (index == 1)
-		env(cmd, environment);
+		env(cmd);
 	else if (index == 2)
-		export(cmd, environment);
+		export(cmd);
 	else if (index == 3)
 		unset(cmd, environment);
 	else if (index == 4)

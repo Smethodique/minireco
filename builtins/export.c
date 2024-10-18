@@ -15,7 +15,7 @@ void    print_export(char *env)
     else
         printf("%s\n", env);
 }
-
+   
 int check_env(char *cmd, char **env)
 {
     int i = 0;
@@ -30,32 +30,43 @@ int check_env(char *cmd, char **env)
     }
     return 0;
 }
-
-void    export_helper(char *cmd, char **env, int len)
+void add_to_envp(char ***env, char *new_var)
 {
-    char **env1;
-    int i;
-    int x;
-
-    i = 0;
-    if ((x = check_env(cmd, env)) && ft_strchr(cmd, '=') 
-        && (length(cmd) == length(env[x])))
-            env[x] = ft_strdup(cmd);
-    else if (!check_env(cmd, env))
+    int len = double_pointer_len(*env);
+    char **new_env = malloc(sizeof(char *) * (len + 2));
+    if (new_env)
     {
-        env1 = malloc(sizeof(char*) * (len + 2));
-        env1[len + 1] = NULL;
-        env1[len] = ft_strdup(cmd);
-        i = -1;
-        while (++i < len)
-            env1[i] = ft_strdup(env[i]);
-        i = -1;
-        while (env1[++i])
-            env[i] = ft_strdup(env1[i]);
-        env[i] = NULL;
-        ft_free(env1);
+        int i = 0;
+        while (i < len)
+        {
+            new_env[i] = (*env)[i];
+            i++;
+        }
+        new_env[i] = ft_strdup(new_var);
+        new_env[i + 1] = NULL;
+        *env = new_env;
     }
 }
+void export_helper(char *cmd, char ***env, int len)
+{
+    int x;
+    char *new_var;
+      (void)len;
+
+    if ((x = check_env(cmd, *env)) && ft_strchr(cmd, '=') 
+        && (length(cmd) == length((*env)[x])))
+    {
+        free((*env)[x]);
+        (*env)[x] = ft_strdup(cmd);
+    }
+    else if (!check_env(cmd, *env))
+    {
+        new_var = ft_strdup(cmd);
+        add_to_envp(env, new_var);
+        free(new_var);
+    }
+}
+
 
 int check_export(char *cmd)
 {
@@ -81,8 +92,7 @@ int check_export(char *cmd)
     }   
     return (1);
 }
-
-void export(t_command *cmd, char **env)
+void export(t_command *cmd)
 {
     int i;
     int len;
@@ -95,9 +105,9 @@ void export(t_command *cmd, char **env)
             if (check_export(cmd->args[i]) == 1)
             {
                 len = 0;
-                while (env[len])
+                while (g_vars.env[len])
                     len++;
-                export_helper(cmd->args[i], env, len);
+                export_helper(cmd->args[i], &g_vars.env, len);
             }
             i++;
         }        
@@ -105,7 +115,7 @@ void export(t_command *cmd, char **env)
     else
     {
         i = -1;
-        while (env[++i])
-            print_export(env[i]);
+        while (g_vars.env[++i])
+            print_export(g_vars.env[i]);
     }
 }

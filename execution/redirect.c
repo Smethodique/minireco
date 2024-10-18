@@ -1,9 +1,12 @@
 #include "../minishell.h"
 
+// Declare the get_path function
+char *get_path(char **args);
+
 
 void    exec_in_child(t_command *cmd, char **env)
 {
-        cmd->args[0] = get_path(cmd->args, env);
+        cmd->args[0] = get_path(cmd->args);
         if (execve(cmd->args[0], cmd->args, env) == -1)
         {
                 perror("minishell: execution failed");

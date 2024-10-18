@@ -42,7 +42,7 @@ void process_value(const char *input, int *i, t_handle_vars *vars, t_token **tok
         ft_putstr_fd("Error: failed to allocate memory\n", 2);
         return ;
     }
-    vars->expanded_value = expand_variables(vars->value);
+    vars->expanded_value = expand_variables(vars->value, g_vars.env);
     free(vars->value);
     if (!vars->expanded_value)
         return ;

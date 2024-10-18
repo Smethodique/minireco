@@ -261,7 +261,7 @@ int							calculate_quote_num(const char *input, int len,
 								int *j, int *p);
 int							is_valid_delimiter(const char *delimiter);
 int							my_mkstemp(char *template);
-char						*expand_variables(const char *str);
+ char *expand_variables(const char *str);
 
 char	*handle_heredoc(const char *delimiter,
 						int expand_vars);
@@ -309,7 +309,6 @@ int	read_and_process_line(t_heredoc *hdoc,
 void						add_argument(t_command *cmd, char *arg);
 void						add_redirection(t_command *cmd, int type,
 								char *filename);
-char						*expand_variables(const char *str);
 void						add_command(t_command **list, t_command *cmd);
 char						*ft_strjoin_char(char *s, char c);
 char						*process_quotes(t_expansion *exp);
@@ -348,7 +347,7 @@ char						*remove_enclosing_quotes(char *str);
 void	parse_token_one(t_parse_context *ctx,
 						t_token **tokens);
 void	parse_token_two(t_parse_context *ctx,
-						t_token **tokens);
+						t_token **tokens, char **env);
 void	parse_token_three(t_parse_context *ctx,
 						t_token **tokens);
 void	parse_token_four(t_parse_context *ctx,
@@ -372,30 +371,32 @@ void						cd(t_command *cmd, char **env);
 int							echo(t_command *cmd, char **env);
 int							first_non_option(char **args);
 int							is_n_option(char *arg);
-void						env(t_command *cmd, char **env);
+void						env(t_command *cmd);
 void						handle_pipes(t_command *commands, char **env);
+void add_to_env(char ***env, char *new_var);
 int							double_pointer_len(char **str);
 void						ft_setter(int value);
 int							ft_getter(void);
 int							is_builtin(t_command *cmd);
 int							is_num(char *str);
-void						export(t_command *cmd, char **env);
+void						export(t_command *cmd);
 int							check_export(char *cmd);
-void						export_helper(char *cmd, char **env, int len);
+void export_helper(char *cmd, char ***env, int len);
 int							check_env(char *cmd, char **env);
 void						print_export(char *env);
 int							pwd(t_command *cmd, char **env);
 void						unset(t_command *cmd, char **env);
 void						unset_helper(char *cmd, char **env, int len);
-char						*get_env_value(char *name);
+char						*get_env_value(char *name, char **env);
 size_t						length(char *s);
 
 //execution
 void						execute_single_cmd(t_command *input, char **env);
-void						execute_cmd(char **cmd, char **env);
+void						execute_cmd(char **cmd);
 void						execute_builtin(t_command *cmd, char **env,
 								int index);
-char						*get_path(char **cmd, char *envp[]);
+char						*get_path(char **cmd);
+
 char						*check_path(char **cmd, char **path);
 char						**ft_free(char **str);
 
@@ -409,6 +410,7 @@ int get_out(t_command *cmd, int fd_out);
 int							get_in(t_command *tmp, int fd_in);
 void						restore_fd(int in, int out, int new_in,
 								int new_out);
+								char    **create_env(void);	
 void						dup_in_out(int in, int out);
 
 #endif

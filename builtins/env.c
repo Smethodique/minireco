@@ -35,6 +35,8 @@ int	double_pointer_len(char **str)
     return (i);
 }
 
+
+
 void increment_shlvl(char **env)
 {
     int i = 0;
@@ -55,26 +57,83 @@ void increment_shlvl(char **env)
         i++;
     }
 }
+void add_to_env(char ***env, char *new_var)
+{
+    int len = double_pointer_len(*env);
+    char **new_env = malloc(sizeof(char *) * (len + 2)); // Allocate space for the new variable and the NULL terminator
+    if (new_env)
+    {
+        int i = 0;
+        while (i < len)
+        {
+            new_env[i] = (*env)[i];
+            i++;
+        }
+        new_env[i] = new_var;
+        new_env[i + 1] = NULL;
+        free(*env);
+        *env = new_env;
+    }
+}
 
-void env(t_command *cmd, char **env)
+void free_env(char **env)
 {
     int i = 0;
-
-    if (cmd->args && double_pointer_len(cmd->args) != 1) 
+    while (env[i])
     {
-        ft_putstr_fd("minishell: env: too many arguments\n", 2);
-        ft_setter(1);
-        return;
+        free(env[i]);
+        i++;
+    }
+    free(env);
+}
+
+
+void env(t_command *cmd)
+{
+    int i = 1;
+    char **new_env = NULL;
+    int empty_env = 0;
+
+    // Check for -i option
+    if (cmd->args && cmd->args[1] && strcmp(cmd->args[1], "-i") == 0) {
+        empty_env = 1;
+        i++;
+    }
+
+    // Create new environment if -i is present or if original env is empty
+    if (empty_env || g_vars.env == NULL || g_vars.env[0] == NULL) {
+        new_env = create_env();
+    } else {
+        new_env = g_vars.env;
+    }
+
+    // Handle additional variable assignments
+    while (cmd->args[i] && strchr(cmd->args[i], '=')) {
+        add_to_env(&new_env, cmd->args[i]);
+        i++;
+    }
+
+    // Update global environment
+    g_vars.env = new_env;
+
+    // If there's a command to execute
+    if (cmd->args[i]) {
+        execute_cmd(&cmd->args[i]);
+    } else {
+        // Print the environment
+        int j = 0;
+        while (g_vars.env[j]) {
+            printf("%s\n", g_vars.env[j]);
+            j++;
+        }
+    }
+
+    // Clean up if we created a new environment
+    if (empty_env || g_vars.env == NULL || g_vars.env[0] == NULL) {
+        free_env(new_env);
     }
 
     ft_setter(0);
-    increment_shlvl(env); // Increment SHLVL before printing the environment
-    while (env[i])
-    {
-        if (ft_strchr(env[i], '='))
-            printf("%s\n", env[i]);
-        i++;
-    }
 }
 
 size_t length(char *s)

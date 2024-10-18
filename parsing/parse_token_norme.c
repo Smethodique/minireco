@@ -13,7 +13,7 @@
     }
 }
 
- void parse_token_two(t_parse_context *ctx, t_token **tokens)
+ void parse_token_two(t_parse_context *ctx, t_token **tokens, char **env)
 {
     if ((*tokens)->type == ENV_VAR)
     {
@@ -22,7 +22,7 @@
             ctx->current_command = new_command();
             add_command(&ctx->command_list, ctx->current_command);
         }
-        ctx->env_value = get_env_value((*tokens)->value + 1); // Skip the '$'
+        ctx->env_value = get_env_value((*tokens)->value + 1,env); // Skip the '$'
         if (ctx->env_value)
             add_argument(ctx->current_command, ctx->env_value);
         else
