@@ -1,110 +1,56 @@
 #include "../minishell.h"
-
-void dup_in_out(int in, int out)
-{
-    if (in)
-    {
-        dup2(in, STDIN_FILENO);
-        close(in);
-    }
-    if (out != 1)
-    {
-        dup2(out, STDOUT_FILENO);
-        close(out);
-    }
-}
-
-void restore_fd(int in, int out, int new_in, int new_out)
-{
-    if (in)
-    {
-        dup2(new_in, STDIN_FILENO);
-        close(new_in);
-    }
-    if (out != 1)
-    {
-        dup2(new_out, STDOUT_FILENO);
-        close(new_out);
-    }
-}
-
 int get_in(t_command *cmd, int fd_in)
 {
     t_redirection *redir = cmd->redirections;
+    int new_fd = fd_in;
     
     while (redir)
     {
-        if (fd_in > 0)
-            close(fd_in);  // Close previous fd if exists
-            
         if (redir->type == INPUT)
         {
-            fd_in = open(redir->filename, O_RDONLY);
-            if (fd_in == -1)
-            {
-                ft_putstr_fd("minishell: ", 2);
-                perror(redir->filename);
-                return -1;
-            }
+            if (new_fd != fd_in)
+                close(new_fd);
+            new_fd = open(redir->filename, O_RDONLY);
+            if (new_fd == -1)
+                return (ft_putstr_fd("minishell: ", 2),perror(redir->filename),-1);
         }
         else if (redir->type == HEREDOC)
         {
-            fd_in = open(redir->filename, O_RDONLY);
-            if (fd_in == -1)
-            {
-                ft_putstr_fd("minishell: cannot open heredoc temp file\n", 2);
-                return -1;
-            }
+            if (new_fd != fd_in)
+                close(new_fd);
+            new_fd = open(redir->filename, O_RDONLY);
+            if (new_fd == -1)
+                return (ft_putstr_fd("minishell: cannot open heredoc temp file\n", 2),-1);
         }
         redir = redir->next;
     }
-    return fd_in;
+    return new_fd;
 }
 
-
-int get_out(t_command *tmp, int fd_out)
+int get_out(t_command *cmd, int fd_out)
 {
-    t_redirection *tmp1;
+    t_redirection *redir = cmd->redirections;
+    int new_fd = fd_out;
     
-    tmp1 = tmp->redirections;
-    while (tmp1)
+    while (redir)
     {
-        if (tmp1->type == OUTPUT)  // Changed from '>' to OUTPUT
-            fd_out = open(tmp1->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        else if (tmp1->type == APPEND)  // Added APPEND handling
-            fd_out = open(tmp1->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-        tmp1 = tmp1->next;
-    }
-    return fd_out;
-}
-
-int get_in_v2(t_command *tmp, int fd_in, int index)
-{
-    t_redirection *tmp1;
-    int fd;
-    char *temp_filename;
-    
-    tmp1 = tmp->redirections;
-    while (tmp1)
-    {
-        if (tmp1->type == INPUT && !tmp1->filename)
-            fd_in = open(tmp1->filename, O_RDONLY);
-        else if (tmp1->type == HEREDOC)
+        if (redir->type == OUTPUT)
         {
-            temp_filename = ft_strjoin("minishell_", ft_itoa(index));
-            fd = open(temp_filename, O_RDWR);
-            free(temp_filename);
-            if (fd != -1)
-                fd_in = fd;
+            if (new_fd != fd_out)
+                close(new_fd);
+            new_fd = open(redir->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            if (new_fd == -1)
+            return (ft_putstr_fd("minishell: ", 2),perror(redir->filename),-1);
         }
-        tmp1 = tmp1->next;
+        else if (redir->type == APPEND)
+        {
+            if (new_fd != fd_out)
+                close(new_fd);
+            new_fd = open(redir->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+            if (new_fd == -1)
+            return (ft_putstr_fd("minishell: ", 2),perror(redir->filename),-1);
+        }
+        redir = redir->next;
     }
-    
-    if (fd_in != 0)  // Only unlink if we opened a heredoc file
-    {
-        temp_filename = ft_strjoin("minishell_", ft_itoa(index));
-        unlink(temp_filename);
-        free(temp_filename);
-    }
-    return fd_in;
+    return new_fd;
 }
