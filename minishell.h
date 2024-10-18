@@ -405,7 +405,7 @@ void						redic_not_builtin(t_command *cmd, char **env);
 void						redic_builtin(t_command *cmd, char **env);
 void						exec_in_child(t_command *cmd, char **env);
 int							get_in_v2(t_command *tmp, int fd_in, int index);
-int							get_out(t_command *tmp, int fd_out);
+int get_out(t_command *cmd, int fd_out);
 int							get_in(t_command *tmp, int fd_in);
 void						restore_fd(int in, int out, int new_in,
 								int new_out);
