@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stakhtou <stakhtou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 22:15:49 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/03/10 02:06:28 by stakhtou         ###   ########.fr       */
+/*   Updated: 2024/10/28 21:32:16 by nel-ouar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ char	*ft_strdup(const char *s1)
 	char	*ptr;
 	size_t	i;
 
+	if (!s1)
+		return (NULL);
 	i = 0;
 	while (s1[i] != '\0')
 	{

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expande_her.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: stakhtou <stakhtou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
+/*   Updated: 2024/10/21 03:26:14 by stakhtou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 static char	*process_input(t_expv *expv)
@@ -57,7 +69,7 @@ char	*expand_single_var(char **p, char *result, size_t *result_len,
 	var.var_name = malloc(var.var_name_len + 1);
 	ft_strncpy(var.var_name, var.var_start, var.var_name_len);
 	var.var_name[var.var_name_len] = '\0';
-	var.var_value = get_env_value(var.var_name,g_vars.env);
+	var.var_value = get_env_value(var.var_name, g_vars.env);
 	if (var.var_value)
 	{
 		var.value_len = ft_strlen(var.var_value);

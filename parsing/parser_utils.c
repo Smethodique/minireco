@@ -1,48 +1,48 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: stakhtou <stakhtou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/24 03:10:21 by stakhtou         ###   ########.fr       */
+/*   Updated: 2024/10/21 03:31:58 by stakhtou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	reset_signals(void)
+char	*ft_strndup(const char *s, size_t n)
 {
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	size_t	len;
+	char	*dup;
+
+	if (s == NULL)
+	{
+		return (NULL);
+	}
+	len = strnlen(s, n);
+	dup = (char *)malloc(len + 1);
+	if (dup == NULL)
+	{
+		return (NULL);
+	}
+	strncpy(dup, s, len);
+	dup[len] = '\0';
+	return (dup);
 }
 
-void	all_signals(void)
+char	*ft_strjoin_char(char *s, char c)
 {
-	g_vars.in_pipe = 0;
-	signal(SIGINT, sigint_handler);
-	setup_terminal();
-	signal(SIGQUIT, SIG_IGN);
-}
+	char	*new_str;
+	int		len;
 
-void	pipe_signals(void)
-{
-	g_vars.in_pipe = 1;
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
-}
-
-void	child_signals(void)
-{
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
-}
-
-void	sigint_handlerh(int signum)
-{
-	(void)signum;
-	g_vars.khbi = dup(0);
-	close(0);
-	g_vars.heredoc_interrupted = 1;
+	len = ft_strlen(s);
+	new_str = (char *)malloc(len + 2);
+	if (!new_str)
+		return (NULL);
+	ft_memcpy(new_str, s, len);
+	new_str[len] = c;
+	new_str[len + 1] = '\0';
+	return (new_str);
 }

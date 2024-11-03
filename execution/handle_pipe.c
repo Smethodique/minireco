@@ -1,133 +1,83 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   handle_pipe.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
+/*   Updated: 2024/10/29 03:57:46 by nel-ouar         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-void setup_child_signals(void)
+void	determine_fds(int *in_fd, int *out_fd, int in_pipe, int out_pipe)
 {
-    signal(SIGINT, SIG_DFL);
-    signal(SIGQUIT, SIG_DFL);
-    signal(SIGTSTP, SIG_DFL);
+	if (g_vars.in_pipe != -1)
+		*in_fd = in_pipe;
+	else
+		*in_fd = STDIN_FILENO;
+	if (out_pipe != -1)
+		*out_fd = out_pipe;
+	else
+		*out_fd = STDOUT_FILENO;
 }
 
-
-
-pid_t execute_piped_command(t_command *cmd, int in_fd, int out_fd, char **env)
+void	close_pipe_fds(int i, t_command *current, int pipes[2][2])
 {
-    pid_t pid;
-
-    pid = fork();
-    if (pid == -1)
-    {
-        perror("fork failed");
-        exit(1);
-    }
-    if (pid == 0)
-    {
-        setup_child_signals();
-        
-        // Handle input redirection
-        int red_in = get_in(cmd, in_fd);
-        if (red_in != STDIN_FILENO)
-        {
-            dup2(red_in, STDIN_FILENO);
-            close(red_in);
-        }
-        else if (in_fd != STDIN_FILENO)
-        {
-            dup2(in_fd, STDIN_FILENO);
-            close(in_fd);
-        }
-        
-        // Handle output redirection
-        int red_out = get_out(cmd, out_fd);
-        if (red_out != STDOUT_FILENO)
-        {
-            dup2(red_out, STDOUT_FILENO);
-            close(red_out);
-        }
-        else if (out_fd != STDOUT_FILENO)
-        {
-            dup2(out_fd, STDOUT_FILENO);
-            close(out_fd);
-        }
-
-        // Close all other file descriptors
-        for (int fd = 3; fd < 256; fd++)
-        {
-            if (fd != red_in && fd != red_out && fd != in_fd && fd != out_fd)
-                close(fd);
-        }
-
-        // Execute the command
-        if (is_builtin(cmd) != NOT_BUILT_IN)
-        {
-            execute_builtin(cmd, env, is_builtin(cmd));
-            exit(0);
-        }
-        else
-        {
-            cmd->args[0] = get_path(cmd->args);
-            if (!cmd->args[0])
-            {
-                fprintf(stderr, "minishell: command not found: %s\n", cmd->args[0]);
-                exit(127);
-            }
-            if (execve(cmd->args[0], cmd->args, env) == -1)
-            {
-                perror("minishell: execution failed");
-                exit(127);
-            }
-        }
-    }
-
-    return pid;
+	if (i > 0)
+		close(pipes[(i + 1) % 2][0]);
+	if (current->next)
+		close(pipes[i % 2][1]);
 }
 
-
-void handle_pipes(t_command *commands, char **env)
+void	wait_for_children(pid_t *pids, int pipe_count)
 {
-    int pipe_count = 0;
-    int status;
-    pid_t *pids;
-    int pipes[2][2];
-    int i = 0;
+	int	i;
+	int	status;
 
-    for (t_command *current = commands; current; current = current->next)
-        pipe_count++;
-    
-    pids = malloc(sizeof(pid_t) * pipe_count);
-    if (!pids)
-        return;
+	i = 0;
+	while (i < pipe_count)
+	{
+		waitpid(pids[i], &status, 0);
+		if (i == pipe_count - 1)
+		{
+			if (WIFEXITED(status))
+				g_vars.exit_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+			{
+				g_vars.exit_status = 128 + WTERMSIG(status);
+				if (WTERMSIG(status) == SIGQUIT)
+					write(1, "Quit\n", 5);
+			}
+		}
+		i++;
+	}
+}
 
-    for (t_command *current = commands; current; current = current->next, i++)
-    {
-        if (current->next && pipe(pipes[i % 2]) == -1)
-        {
-            perror("pipe failed");
-            free(pids);
-            return;
-        }
+void	handle_pipes(t_command *commands, char **env)
+{
+	t_pipe_data	data;
 
-        int in_fd = (i > 0) ? pipes[(i + 1) % 2][0] : STDIN_FILENO;
-        int out_fd = current->next ? pipes[i % 2][1] : STDOUT_FILENO;
-
-        pids[i] = execute_piped_command(current, in_fd, out_fd, env);
-
-        if (i > 0)
-            close(pipes[(i + 1) % 2][0]);
-        if (current->next)
-            close(pipes[i % 2][1]);
-    }
-
-    for (i = 0; i < pipe_count; i++)
-    {
-        waitpid(pids[i], &status, 0);
-        if (i == pipe_count - 1)
-        {
-            if (WIFEXITED(status))
-                g_vars.exit_status = WEXITSTATUS(status);
-            else if (WIFSIGNALED(status))
-                g_vars.exit_status = 128 + WTERMSIG(status);
-        }
-    }
-    
-    free(pids);
+	pipe_signals();
+	data.pipe_count = count_pipes(commands);
+	data.pids = malloc(sizeof(pid_t) * data.pipe_count);
+	data.i = 0;
+	data.current = commands;
+	while (data.current)
+	{
+		if (data.current->next)
+			setup_pipe(data.pipes, data.i);
+		determine_fds(&data.in_fd, &data.out_fd, data.pipes[(data.i + 1)
+			% 2][0], data.pipes[data.i % 2][1]);
+		data.pids[data.i] = execute_piped_command(data.current, data.in_fd,
+				data.out_fd, env);
+		close_pipe_fds(data.i, data.current, data.pipes);
+		data.current = data.current->next;
+		data.i++;
+	}
+	wait_for_children(data.pids, data.pipe_count);
+	free(data.pids);
+	all_signals();
 }

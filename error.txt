@@ -1,0 +1,13 @@
+export
+        compare between key and other key not all value
+exit
+        print exit in ^D signal
+redirection
+        create file before error permition     ex ls > a < b > c    most create a and write permition error for b
+exit status
+        exit status for ^C is 130 and for Permission denied
+execve permition
+        print permition denied for a file havent x permition and also for a diroctiry
+env
+    check if the variable has a value before add to env
+

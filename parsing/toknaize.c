@@ -1,4 +1,16 @@
-#include"../minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   toknaize.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: stakhtou <stakhtou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
+/*   Updated: 2024/10/21 16:46:01 by stakhtou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../minishell.h"
 
 void	add_token(t_token **head, t_token *new_token)
 {
@@ -18,18 +30,20 @@ void	add_token(t_token **head, t_token *new_token)
 		current->next = new_token;
 	}
 }
-void	free_tokens(t_token *head) // Explicitly declare return type as void
+
+void	free_tokens(t_token *head)
 {
-	t_token *tmp;
+	t_token	*tmp;
 
 	while (head != NULL)
 	{
 		tmp = head;
 		head = head->next;
-		free(tmp->value); // Assuming ft_strdup allocates memory
+		free(tmp->value);
 		free(tmp);
 	}
 }
+
 t_token	*new_token(int type, const char *value)
 {
 	t_token	*token;

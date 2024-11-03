@@ -64,7 +64,7 @@ char	*ft_itoa(int n)
 	int		len;
 	char	*str;
 	int		i;
-  
+
 	i = 0;
 	len = calclen(n);
 	str = (char *)malloc(sizeof(char) * (len + 1));
