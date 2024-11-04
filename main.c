@@ -14,15 +14,45 @@
 
 t_global_vars	g_vars;
 
+void print_command_list (t_command *commands)
+{
+	t_command *current = commands;
+	t_redirection *redirections;
+	int i = 0;
+
+	while (current)
+	{
+		while (current->args[i])
+		{
+			printf("args[%d]: %s\n", i, current->args[i]);
+			i++;
+		}
+		
+		printf("Command %d: %s\n", i, current->args[0]);
+		redirections = current->redirections;
+		while (redirections)
+		{
+			printf("Redirection: %d\n", redirections->type);
+			
+			printf("Filename: %s\n", redirections->filename);
+			redirections = redirections->next;
+		}
+		current = current->next;
+		i++;
+	}
+}
+
 void	process_linee(char *line, char **env)
 {
 	t_token		*tokens;
 	t_command	*commands;
 
 	tokens = tokenize_input(line);
+	print_tokens(tokens);
 	if (tokens)
 	{
-		commands = parse_tokens(tokens);
+		commands = parse_tokens(tokens);		
+		
 		if (commands)
 		{
 			if (commands->next)
@@ -104,3 +134,4 @@ int	main(int argc, char **argv, char **env)
 	init_shell(env);
 	return (g_vars.exit_status);
 }
+

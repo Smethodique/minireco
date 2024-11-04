@@ -54,8 +54,9 @@ static char	*get_target_path(t_command *cmd, char **env)
 {
 	char	*path;
 	char	*home;
-
-	if (!cmd->args[1] || ft_isspace(cmd->args[1][0]) ||
+    if (cmd->args[1] == NULL)
+		return (ft_strdup(get_env_value("PWD", env)));
+	if ( ft_isspace(cmd->args[1][0]) ||
 		cmd->args[1][0] == '\0' || ft_strncmp(cmd->args[1], "--", 3) == 0)
 	{
 		home = get_home_path(env);
@@ -72,10 +73,8 @@ static char	*get_target_path(t_command *cmd, char **env)
 	}
 	path = ft_strdup(cmd->args[1]);
 	if (path[0] == '~' && g_vars.exit_status == 0)
-	{
-		home = get_home_path(env);
-		expand_tilde(&path, home);
-	}
+		expand_tilde(&path, get_home_path(env));
+
 	return (path);
 }
 

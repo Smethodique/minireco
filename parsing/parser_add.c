@@ -36,20 +36,12 @@ t_command	*new_command(void)
 
 void	add_argument(t_command *cmd, char *arg)
 {
-	char	*trimmed_arg;
-
-	trimmed_arg = ft_strtrim(arg, " \t");
-	if (trimmed_arg == NULL)
-	{
-		return ;
-	}
 	if (cmd->arg_count == 0)
 	{
-		cmd->name = ft_strdup(trimmed_arg);
+		cmd->name = ft_strdup(arg);
 	}
-	cmd->args[cmd->arg_count++] = ft_strdup(trimmed_arg);
+	cmd->args[cmd->arg_count++] = ft_strdup(arg);
 	cmd->args[cmd->arg_count] = NULL;
-	free(trimmed_arg);
 }
 
 void	add_redirection(t_command *cmd, int type, char *filename)

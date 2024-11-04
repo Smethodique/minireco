@@ -88,10 +88,21 @@ void	setup_child_signals(void)
 
 void	setup_redirections(t_command *cmd, int in_fd, int out_fd)
 {
+	int	red_in;
 	int	red_out;
 
+	red_in = get_in(cmd->redirections, in_fd);
 	red_out = get_out(cmd, out_fd);
-	(void)in_fd;
+	if (red_in != STDIN_FILENO)
+	{
+		dup2(red_in, STDIN_FILENO);
+		close(red_in);
+	}
+	else if (in_fd != STDIN_FILENO)
+	{
+		dup2(in_fd, STDIN_FILENO);
+		close(in_fd);
+	}
 	if (red_out != STDOUT_FILENO)
 	{
 		dup2(red_out, STDOUT_FILENO);
@@ -103,4 +114,5 @@ void	setup_redirections(t_command *cmd, int in_fd, int out_fd)
 		close(out_fd);
 	}
 }
+
 

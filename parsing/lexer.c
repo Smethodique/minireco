@@ -60,9 +60,11 @@ t_token	*tokenize_input(const char *input)
 		if (handle_special_cases(&state, input))
 			continue ;
 		handle_command_or_argument(input, &state.i, state.len, &state.tokens);
-		if (g_vars.exit_status == 2)
-			return (state.tokens);
-	}
+		if (state.i >= state.len)
+			return (state.tokens);	
+		if (!state.tokens)
+			return (free_tokens(state.tokens), NULL);
+   }
 	concatinate(&state.tokens);
 	return (state.tokens);
 }

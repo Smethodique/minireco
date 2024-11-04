@@ -46,7 +46,7 @@ void	parse_token_three(t_parse_context *ctx, t_token **tokens)
 		*tokens = (*tokens)->next;
 	}
 }
-
+ 
 void	parse_token_four(t_parse_context *ctx, t_token **tokens)
 {
 	if ((*tokens)->type == HEREDOC)

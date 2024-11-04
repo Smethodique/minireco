@@ -33,6 +33,7 @@
 # define NOT_BUILT_IN -1
 # include <readline/readline.h>
 # define P 0644
+# define PATH_MAX 4096
 
 typedef struct s_global_vars
 {

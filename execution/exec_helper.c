@@ -88,25 +88,34 @@ char	*get_path(char **cmd)
 void execute_child(char **cmd, char *path)
 {
     struct stat path_stat;
-    
+  
     if (stat(path, &path_stat) == -1) {
         ft_putstr_fd("minishell: ", 2);
-        perror(path);
+        ft_putstr_fd(cmd[0], 2);
+        ft_putstr_fd(": command not found\n", 2);
+        free(path);
         exit(127);
-    }
-    
+    }  
     if (S_ISDIR(path_stat.st_mode)) {
         ft_putstr_fd("minishell: ", 2);
         ft_putstr_fd(path, 2);
         ft_putstr_fd(": is a directory\n", 2);
+        free(path);
         exit(126);
-    }
-    
+    } 
     if (execve(path, cmd, g_vars.env) == -1) {
         ft_putstr_fd("minishell: ", 2);
-        perror(path);
-        if (errno == EACCES)
+        if (errno == EACCES) {
+            ft_putstr_fd(path, 2);
+            ft_putstr_fd(": Permission denied\n", 2);
+            free(path);
             exit(126);
-        exit(127);
+        } else {
+            perror(cmd[0]);
+            free(path);
+            exit(127);
+        }
     }
+    free(path);
+    exit(1);
 }
