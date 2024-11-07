@@ -13,95 +13,193 @@
 #include "../minishell.h"
 #include <stdbool.h>
 
-static char	*get_home_path(char **env)
+
+
+void	update_env_variable(char **env,  char *var,  char *value)
 {
-	int	i;
+	char	*new_var;
+	int		i;
 
 	i = 0;
 	while (env[i])
 	{
-		if (ft_strncmp(env[i], "HOME=", 5) == 0)
-			return (env[i] + 5);
+		if (ft_strncmp(env[i], var, ft_strlen(var)) == 0)
+		{
+			new_var = ft_strjoin((char *)var, (char *)value);
+			env[i] = new_var;
+			return ;
+		}
+		
 		i++;
 	}
-	return (NULL);
 }
 
-static void	expand_tilde(char **path, char *home)
-{
-	char	*expanded_path;
 
-	if (!home)
+void home(char *oldpwd)
+{
+	char *home_path;
+
+	home_path = getenv("HOME");
+	if (home_path)
+	{
+		chdir(home_path);
+		update_env_variable(g_vars.env, "OLDPWD", oldpwd);
+		update_env_variable(g_vars.env, "PWD", home_path);
+	}
+	else
 	{
 		ft_putstr_fd("minishell: cd: HOME not set\n", 2);
 		g_vars.exit_status = 1;
-		return ;
 	}
-	if ((*path)[1] == '/' || (*path)[1] == '\0')
-		expanded_path = ft_strjoin(home, *path + 1);
-	else
-		expanded_path = ft_strdup(*path);
-	if (!expanded_path)
-	{
-		g_vars.exit_status = 1;
-		return ;
-	}
-	free(*path);
-	*path = expanded_path;
 }
 
-static char	*get_target_path(t_command *cmd, char **env)
-{
-	char	*path;
-	char	*home;
-    if (cmd->args[1] == NULL)
-		return (ft_strdup(get_env_value("PWD", env)));
-	if ( ft_isspace(cmd->args[1][0]) ||
-		cmd->args[1][0] == '\0' || ft_strncmp(cmd->args[1], "--", 3) == 0)
-	{
-		home = get_home_path(env);
-		if (!home || *home == '\0' || ft_isspace(*home))
-			return (ft_putstr_fd("minishell: cd: HOME not set\n", 2), NULL);
-		return (ft_strdup(home));
-	}
-	else if (ft_strncmp(cmd->args[1], "-", 2) == 0)
-	{
-		path = get_env_value("OLDPWD", env);
-		if (!path)
-			return (ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2), NULL);
-		return (ft_putendl_fd(path, 1), ft_strdup(path));
-	}
-	path = ft_strdup(cmd->args[1]);
-	if (path[0] == '~' && g_vars.exit_status == 0)
-		expand_tilde(&path, get_home_path(env));
 
-	return (path);
+
+
+void update_current_dir(char *new_path)
+{
+    if (g_vars.current_dir)
+        free(g_vars.current_dir);
+    g_vars.current_dir = ft_strdup(new_path);
+    update_env_variable(g_vars.env, "PWD=", g_vars.current_dir);
+}
+void go_oldpwd(void)
+{
+    if (!g_vars.saved_oldpwd)
+    {
+        ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2);
+        g_vars.exit_status = 1;
+        return;
+    }
+
+    if (g_vars.current_dir)
+        update_env_variable(g_vars.env, "OLDPWD=", g_vars.current_dir);
+
+    if (chdir(g_vars.saved_oldpwd) == -1)
+    {
+        ft_putstr_fd("minishell: cd: OLDPWD not accessible\n", 2);
+        g_vars.exit_status = 1;
+        return;
+    }
+
+    update_current_dir(g_vars.saved_oldpwd);
+    ft_putstr_fd(g_vars.saved_oldpwd, 1);
+    ft_putstr_fd("\n", 1);
+}
+char *get_current_dir(void)
+{
+    char *cwd;
+
+    cwd = getcwd(NULL, 0);
+    if (cwd)
+        return cwd;
+    // If getcwd fails, return the tracked path
+    if(g_vars.current_dir)
+		return ft_strdup(g_vars.current_dir);
+	// If the tracked path is not set, try to get it from the environment
+	else
+	{
+		char *pwd = get_env_value("PWD", g_vars.env);
+		if (pwd)
+			return ft_strdup(pwd);
+	}
+	return NULL;
+
 }
 
-void	cd(t_command *cmd, char **env)
+void init_current_dir(void)
 {
-	char	*path;
+    char *cwd;
 
-	if (!cmd->args)
+    cwd = getcwd(NULL, 0);
+    if (cwd)
+        update_current_dir(cwd);
+    else if (!g_vars.current_dir)
+    {
+        char *pwd = get_env_value("PWD", g_vars.env);
+        if (pwd)
+            update_current_dir(pwd);
+    }
+    if (cwd)
+        free(cwd);
+}
+
+char *build_path(char *base, char *path)
+{
+    char *result;
+    char *temp;
+
+    if (path[0] == '/')
+        return ft_strdup(path);
+    if (ft_strcmp(path, "..") == 0)
+    {
+        temp = ft_strjoin(base, "/..");
+        return temp;
+    }
+    result = ft_strjoin(base, "/");
+    temp = result;
+    result = ft_strjoin(result, path);
+    free(temp);
+
+    int i = 0;
+    while (result[i])
+        i++;
+    if (result[i - 1] == '/')
+        result[i - 1] = '\0';
+    return result;
+}
+
+
+
+void with_path(char **argv)
+{
+    char *new_path;
+
+        init_current_dir();
+
+    new_path = build_path(g_vars.current_dir, argv[1]);
+    
+    if (g_vars.current_dir)
+        update_env_variable(g_vars.env, "OLDPWD=", g_vars.current_dir);
+
+    if (chdir(new_path) == -1)
 	{
+		ft_putstr_fd("minishell: cd: ", 2);
+		ft_putstr_fd(argv[1], 2);
+		ft_putstr_fd(": No such file or directory\n", 2);
 		g_vars.exit_status = 1;
-		return ;
+		free(new_path);
+		return;
 	}
-	if (cmd->args[1] && cmd->args[2])
-	{
-		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
-		g_vars.exit_status = 1;
-		return ;
+
+    update_current_dir(new_path);
+    free(new_path);
+}
+void cd(t_command *cmd)
+{
+    char *current;
+
+    g_vars.exit_status = 0;
+    if (!g_vars.current_dir)
+        init_current_dir();
+    current = get_current_dir();
+   if (current)
+    {
+		update_env_variable(g_vars.env, "OLDPWD=", current);
+		free(current);
 	}
-	path = get_target_path(cmd, env);
-	if (!path)
-	{
-		g_vars.exit_status = 1;
-		return ;
-	}
-	if (!change_dir(env, path))
-		g_vars.exit_status = 1;
-	else
-		g_vars.exit_status = 0;
-	free(path);
+    if (cmd->arg_count == 1)
+        home(g_vars.saved_oldpwd);
+    else if (cmd->arg_count == 2)
+    {
+        if (ft_strcmp(cmd->args[1], "-") == 0)
+            go_oldpwd();
+        else
+            with_path(cmd->args);
+    }
+    else
+    {
+        ft_putstr_fd("minishell: cd: too many arguments\n", 2);
+        g_vars.exit_status = 1;
+    }
 }

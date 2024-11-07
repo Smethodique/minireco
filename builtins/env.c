@@ -19,7 +19,7 @@ void	add_to_env(char ***env, char *new_var)
 	char	**new_env;
 
 	len = double_pointer_len(*env);
-	new_env = malloc(sizeof(char *) * (len + 2));
+	new_env = malloc(sizeof(char *) * (len + 2)); 
 	if (new_env)
 	{
 		i = 0;
@@ -30,7 +30,6 @@ void	add_to_env(char ***env, char *new_var)
 		}
 		new_env[i] = new_var;
 		new_env[i + 1] = NULL;
-		free(*env);
 		*env = new_env;
 	}
 }

@@ -72,8 +72,7 @@ int	check_file(const char *path, int mode)
 	}
 	else if (mode == O_RDONLY)
 	{
-		return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd((char *)path, 2),
-			ft_putstr_fd(": No such file or directory\n", 2), -1);
+		return(-1);
 	}
 	return (0);
 }

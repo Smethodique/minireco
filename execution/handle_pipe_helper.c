@@ -33,29 +33,32 @@ void	execute_command(t_command *cmd, char **env)
 	if (is_builtin(cmd) != NOT_BUILT_IN)
 	{
 		execute_builtin(cmd, env, is_builtin(cmd));
-		exit(g_vars.exit_status);
+	       g_vars.exit_status = 0;	
 	}
 	else
 	{
 		cmd->args[0] = get_path(cmd->args);
 		if (!cmd->args[0])
+			g_vars.exit_status = 127;
+		if (g_vars.flag_check == 1)
 		{
-			ft_putstr_fd("minishell: command not found: ", 2);
-			exit(127);
+			g_vars.flag_check = 2;
+			exec_in_child(cmd, env);
 		}
 		if (execve(cmd->args[0], cmd->args, env) == -1)
 		{
 			ft_putstr_fd("minishell: error executing command: ", 2);
 			ft_putstr_fd(cmd->args[0], 2);
 			ft_putstr_fd("\n", 2);
-			exit(127);
+			g_vars.exit_status = 127;
 		}
 	}
+	exit(g_vars.exit_status);
 }
-
 pid_t	execute_piped_command(t_command *cmd, int in_fd, int out_fd, char **env)
 {
 	pid_t	pid;
+	g_vars.flag_check = 0;
 
 	pid = fork();
 	if (pid == -1)
@@ -65,10 +68,13 @@ pid_t	execute_piped_command(t_command *cmd, int in_fd, int out_fd, char **env)
 	}
 	if (pid == 0)
 	{
+		reset_signals();
 		setup_child_signals();
-		setup_redirections(cmd, in_fd, out_fd);
+		setup_redirection(cmd);
 		close_unused_fds(get_in(cmd->redirections, in_fd), get_out(cmd, out_fd), in_fd,
 			out_fd);
+		if (get_in(cmd->redirections, in_fd) != 0 || get_out(cmd, out_fd) != 0)
+			g_vars.flag_check = 1;
 		execute_command(cmd, env);
 	}
 	return (pid);

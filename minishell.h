@@ -42,6 +42,9 @@ typedef struct s_global_vars
 	int						heredoc_interrupted;
 	int						khbi;
 	int						in_pipe;
+	 char				*current_dir;
+	 char				*saved_oldpwd;
+	 int 				flag_check;
 
 }							t_global_vars;
 
@@ -333,13 +336,13 @@ void						initialize_state(t_lexer_state *state,
 int							handle_heredoc_cases(t_lexer_state *state,
 								const char *input);
 int							handle_whitespace(t_lexer_state *state);
-void						update_env_variable(char **env, const char *var,
-								const char *value);
+void						update_env_variable(char **env,  char *var,
+								 char *value);
 void						update_wds(char **env, const char *wd);
 bool						chdir_errno_mod(const char *path);
 bool						change_dir(char **env, char *path);
 void						handle_tilde(char **env, char **path);
-void						cd(t_command *cmd, char **env);
+void						cd(t_command *cmd);
 int							handle_pipe(t_lexer_state *state);
 t_command					*new_command(void);
 int							myrand(void);
@@ -443,15 +446,12 @@ pid_t						execute_piped_command(t_command *cmd, int in_fd,
 void						update_old_pwd(char *old_pwd, char **env);
 void						update_pwd(char *pwd, char **env);
 char						*ft_chr(char **env, char *vrb);
-void						cd(t_command *cmd, char **env);
 int							echo(t_command *cmd, char **env);
 int							first_non_option(char **args);
 int							is_n_option(char *arg);
 void						env(t_command *cmd);
 void						handle_pipes(t_command *commands, char **env);
 void						setup_child_signals(void);
-void						setup_redirections(t_command *cmd, int in_fd,
-								int out_fd);
 void						close_unused_fds(int red_in, int red_out, int in_fd,
 								int out_fd);
 void						execute_command(t_command *cmd, char **env);
@@ -475,6 +475,7 @@ int							double_pointer_len(char **str);
 void						ft_setter(int value);
 int							ft_getter(void);
 int							is_builtin(t_command *cmd);
+void	setup_redirection(t_command *cmd);
 int							is_num(char *str);
 void						export(t_command *cmd);
 int							check_export(char *cmd);

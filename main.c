@@ -14,33 +14,7 @@
 
 t_global_vars	g_vars;
 
-void print_command_list (t_command *commands)
-{
-	t_command *current = commands;
-	t_redirection *redirections;
-	int i = 0;
 
-	while (current)
-	{
-		while (current->args[i])
-		{
-			printf("args[%d]: %s\n", i, current->args[i]);
-			i++;
-		}
-		
-		printf("Command %d: %s\n", i, current->args[0]);
-		redirections = current->redirections;
-		while (redirections)
-		{
-			printf("Redirection: %d\n", redirections->type);
-			
-			printf("Filename: %s\n", redirections->filename);
-			redirections = redirections->next;
-		}
-		current = current->next;
-		i++;
-	}
-}
 
 void	process_linee(char *line, char **env)
 {
@@ -48,7 +22,6 @@ void	process_linee(char *line, char **env)
 	t_command	*commands;
 
 	tokens = tokenize_input(line);
-	print_tokens(tokens);
 	if (tokens)
 	{
 		commands = parse_tokens(tokens);		
@@ -74,6 +47,8 @@ void	init_shell(char **env)
 	while (1)
 	{
 		line = readline("\033[3;32mminishell$ \033[0m");
+		signal(SIGINT, SIG_IGN);
+
 		if (line == NULL)
 			break ;
 		if (ft_strlen(line) > 0)
@@ -121,6 +96,7 @@ int	main(int argc, char **argv, char **env)
 {
 	(void)argc;
 	(void)argv;
+	
 	g_vars.khbi = -1;
 	g_vars.heredoc_interrupted = 0;
 	g_vars.in_pipe = 0;

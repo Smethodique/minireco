@@ -18,7 +18,7 @@ builtins/append_export.c builtins/append_helper.c execution/path_expantion.c
 OBJS = $(SRCS:.c=.o)
 LIBFT = 1337Libft/libft.a
 CC = cc
-CFLAGS = -Wall -Wextra -Werror # -g    -fsanitize=address  -I/Users/$(USER)/homebrew/opt/readline/include
+CFLAGS = -Wall -Wextra -Werror  #-g    -fsanitize=address  -I/Users/$(USER)/homebrew/opt/readline/include
 LDFLAGS = -L1337Libft -lft -L/Users/$(USER)/homebrew/opt/readline/lib -lreadline
 
 # Add silent flags

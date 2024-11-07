@@ -81,8 +81,8 @@ void	export(t_command *cmd)
 
 void	execute_builtin(t_command *cmd, char **environment, int index)
 {
-	if (index == 0)
-		cd(cmd, environment);
+	if (index == 1)
+		cd(cmd);
 	else if (index == 1)
 		env(cmd);
 	else if (index == 2)
@@ -102,7 +102,9 @@ void	execute_builtin(t_command *cmd, char **environment, int index)
 int	is_builtin(t_command *cmd)
 {
 	if (ft_strcmp(cmd->args[0], "cd") == 0)
-		return (0);
+	{
+		return (1);
+	}
 	else if (ft_strcmp(cmd->args[0], "env") == 0)
 		return (1);
 	else if (ft_strcmp(cmd->args[0], "export") == 0)
@@ -112,9 +114,13 @@ int	is_builtin(t_command *cmd)
 	else if (ft_strcmp(cmd->args[0], "echo") == 0)
 		return (4);
 	else if (ft_strcmp(cmd->args[0], "pwd") == 0)
+	{
 		return (5);
+	}
 	else if (ft_strcmp(cmd->args[0], "exit") == 0)
 		return (6);
 	else
+	{
 		return (-1);
+	}
 }
