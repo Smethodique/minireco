@@ -55,30 +55,52 @@ void	execute_command(t_command *cmd, char **env)
 	}
 	exit(g_vars.exit_status);
 }
-pid_t	execute_piped_command(t_command *cmd, int in_fd, int out_fd, char **env)
+pid_t execute_piped_command(t_command *cmd, int in_fd, int out_fd, char **env)
 {
-	pid_t	pid;
-	g_vars.flag_check = 0;
+    pid_t pid;
+    g_vars.flag_check = 0;
 
-	pid = fork();
-	if (pid == -1)
-	{
-		ft_printf("minishell: fork failed\n");
-		exit(1);
-	}
-	if (pid == 0)
-	{
-		reset_signals();
-		setup_child_signals();
-		setup_redirection(cmd);
-		close_unused_fds(get_in(cmd->redirections, in_fd), get_out(cmd, out_fd), in_fd,
-			out_fd);
-		if (get_in(cmd->redirections, in_fd) != 0 || get_out(cmd, out_fd) != 0)
-			g_vars.flag_check = 1;
-		execute_command(cmd, env);
-	}
-	return (pid);
+    pid = fork();
+    if (pid == -1)
+    {
+        perror("minishell: fork failed");
+        return -1;
+    }
+
+    if (pid == 0)
+    {
+        reset_signals();
+        setup_child_signals();
+
+        // Set up redirections
+        if (in_fd != STDIN_FILENO)
+        {
+            dup2(in_fd, STDIN_FILENO);
+            close(in_fd);
+        }
+        if (out_fd != STDOUT_FILENO)
+        {
+            dup2(out_fd, STDOUT_FILENO);
+            close(out_fd);
+        }
+
+        // Set up any additional redirections from the command
+        setup_redirection(cmd);
+        
+        // Close all unnecessary file descriptors
+        close_unused_fds(get_in(cmd->redirections, in_fd), 
+            get_out(cmd, out_fd), in_fd, out_fd);
+
+        if (cmd->pipe_next)
+            g_vars.flag_check = 1;
+
+        execute_command(cmd, env);
+        exit(1); // Should not reach here
+    }
+
+    return pid;
 }
+
 
 int	count_pipes(t_command *commands)
 {

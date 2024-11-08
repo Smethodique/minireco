@@ -103,6 +103,8 @@ int	is_builtin(t_command *cmd)
 {
 	if (ft_strcmp(cmd->args[0], "cd") == 0)
 	{
+		if(cmd->args[0] == NULL)
+			return -1;
 		return (1);
 	}
 	else if (ft_strcmp(cmd->args[0], "env") == 0)
@@ -114,9 +116,7 @@ int	is_builtin(t_command *cmd)
 	else if (ft_strcmp(cmd->args[0], "echo") == 0)
 		return (4);
 	else if (ft_strcmp(cmd->args[0], "pwd") == 0)
-	{
 		return (5);
-	}
 	else if (ft_strcmp(cmd->args[0], "exit") == 0)
 		return (6);
 	else

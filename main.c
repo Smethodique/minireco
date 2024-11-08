@@ -24,8 +24,12 @@ void	process_linee(char *line, char **env)
 	tokens = tokenize_input(line);
 	if (tokens)
 	{
-		commands = parse_tokens(tokens);		
-		
+		commands = parse_tokens(tokens);	
+
+		 if (commands->redirections)
+            {
+               g_vars.in_pipe = 2;
+            }
 		if (commands)
 		{
 			if (commands->next)
@@ -47,8 +51,7 @@ void	init_shell(char **env)
 	while (1)
 	{
 		line = readline("\033[3;32mminishell$ \033[0m");
-		signal(SIGINT, SIG_IGN);
-
+		
 		if (line == NULL)
 			break ;
 		if (ft_strlen(line) > 0)

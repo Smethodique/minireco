@@ -45,6 +45,7 @@ typedef struct s_global_vars
 	 char				*current_dir;
 	 char				*saved_oldpwd;
 	 int 				flag_check;
+	 int 				in_fd;
 
 }							t_global_vars;
 
@@ -99,7 +100,19 @@ typedef struct s_command
 	int						pipe_next;
 	struct s_redirection	*redirections;
 	struct s_command		*next;
+	struct t_pipe_list		*pipe_data;
 }							t_command;
+
+typedef struct s_pipe_list
+{
+	int						pipe_count;
+	pid_t					*pids;
+	int						pipes[2][2];
+	int						i;
+	t_command				*current;
+	int						in_fd;
+	int						out_fd;
+}							t_pipe_list;
 
 typedef struct s_handle_vars
 {

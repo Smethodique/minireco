@@ -111,21 +111,25 @@ void	redic_not_builtin(t_command *cmd, char **env)
 	pid_t	pid;
 	int		status;
 
-	pid = fork();
+	pid = fork();	
+	pipe_signals();
 	if (pid == 0)
 	{
 		reset_signals();	
 		setup_redirection(cmd);
 		exec_in_child(cmd, env);
-		exit(1);
 	}
 	else if (pid > 0)
 	{
+		
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status))
 			g_vars.exit_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
-			g_vars.exit_status = 128 + WTERMSIG(status);	
+			g_vars.exit_status = 128 + WTERMSIG(status);
+
+			
+		g_vars.in_pipe = 0;		
 	}	
 	else
 		perror("minishell: fork failed"); 
