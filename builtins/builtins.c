@@ -83,8 +83,7 @@ void	execute_builtin(t_command *cmd, char **environment, int index)
 {
 	if (index == 1)
 		cd(cmd);
-	else if (index == 1)
-		env(cmd);
+	
 	else if (index == 2)
 		export(cmd);
 	else if (index == 3)
@@ -95,6 +94,9 @@ void	execute_builtin(t_command *cmd, char **environment, int index)
 		pwd(cmd, environment);
 	else if (index == 6)
 		ft_exit(cmd);
+	else if(index == 10)
+		env(cmd);
+
 	else
 		g_vars.exit_status = 0;
 }
@@ -108,7 +110,7 @@ int	is_builtin(t_command *cmd)
 		return (1);
 	}
 	else if (ft_strcmp(cmd->args[0], "env") == 0)
-		return (1);
+		return (10);
 	else if (ft_strcmp(cmd->args[0], "export") == 0)
 		return (2);
 	else if (ft_strcmp(cmd->args[0], "unset") == 0)

@@ -51,7 +51,6 @@ char	*get_env_value(char *name, char **env)
 	{
 		if (ft_strncmp(env[i], name, name_len) == 0 && env[i][name_len] == '=')
 		{
-			printf("pwd: %s\n", env[i] + name_len + 1);
 			return (env[i] + name_len + 1);
 		}
 		i++;

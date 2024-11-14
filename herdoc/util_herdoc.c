@@ -94,6 +94,7 @@ static char	*read_heredoc_content(t_heredoc *hd)
 	return (hd->content);
 }
 
+
 char	*handle_heredoc(const char *delimiter, int expand_vars)
 {
 	t_heredoc	hd;

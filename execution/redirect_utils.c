@@ -27,8 +27,6 @@ int handle_redirection(t_redirection *redir, int fd_in)
     new_fd = fd_in;
     if (redir->type == INPUT || redir->type == HEREDOC)
     {
-        if (new_fd != fd_in)
-            close(new_fd);
         expanded = ft_strdup(redir->filename);
         if (redir->type == INPUT)
         {
@@ -42,13 +40,10 @@ int handle_redirection(t_redirection *redir, int fd_in)
         new_fd = open(expanded, O_RDONLY);
         if (new_fd < 0)
         {
-            perror("open");
             free(expanded);
             return (-1);
         }
         free(expanded);
-        if (new_fd == -1)
-            return (-1);
     }
     return (new_fd);
 }

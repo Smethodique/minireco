@@ -19,7 +19,7 @@ void	add_to_env(char ***env, char *new_var)
 	char	**new_env;
 
 	len = double_pointer_len(*env);
-	new_env = malloc(sizeof(char *) * (len + 2)); 
+	new_env = malloc(sizeof(char *) * (len + 2));
 	if (new_env)
 	{
 		i = 0;
@@ -41,15 +41,8 @@ void	print_env(void)
 	j = 0;
 	while (g_vars.env[j])
 	{
-		if (ft_strcmp(g_vars.env[j],
-				"PATH=/usr/local/sbin:/usr/local/bin:"
-				"/usr/sbin:/usr/bin:/sbin:/bin") == 0)
-		{
-			j++;
-			continue ;
-		}
-		if(ft_strchr(g_vars.env[j],'='))
-		printf("%s\n", g_vars.env[j]);
+		if (ft_strchr(g_vars.env[j], '='))
+			printf("%s\n", g_vars.env[j]);
 		j++;
 	}
 }
@@ -74,10 +67,13 @@ void	env(t_command *cmd)
 
 	i = 1;
 	new_env = NULL;
-	if (cmd->args && cmd->args[1] && ft_strcmp(cmd->args[1], "-i") == 0)
-		i++;
-	if (g_vars.env == NULL || g_vars.env[0] == NULL)
-		new_env = create_env();
+	if (cmd->args && cmd->args[1] && ft_strcmp(cmd->args[1], "-i") == 0
+		&& ft_strcmp(cmd->args[2], "./minishell") == 0)
+	{
+		g_vars.env = NULL;
+		g_vars.env = create_env();
+		return ;
+	}
 	else
 		new_env = g_vars.env;
 	while (cmd->args[i] && ft_strchr(cmd->args[i], '='))

@@ -64,8 +64,6 @@ void	execute_single_cmd(t_command *cmd, char **env)
 {
 	int	cmd_type;
 
-	if (cmd == NULL || cmd->args == NULL || cmd->args[0] == NULL)
-		return ;
 	all_signals();
 	cmd_type = is_builtin(cmd);
 	if (cmd->redirections)

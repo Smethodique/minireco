@@ -41,6 +41,7 @@ void read_input_loop(void)
 }
 void	exec_in_child(t_command *cmd, char **env)
 {
+
 	cmd->args[0] = get_path(cmd->args);
 	if(g_vars.flag_check == 2)
 	{

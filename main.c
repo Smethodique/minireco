@@ -14,7 +14,18 @@
 
 t_global_vars	g_vars;
 
+void print_command(t_command *cmd)
+{
+	int i;
 
+	i = 0;
+	printf("Command: %s\n", cmd->args[0]);
+	while (cmd->args[i])
+	{
+		printf("Arg %d: %s\n", i, cmd->args[i]);
+		i++;
+	}
+}
 
 void	process_linee(char *line, char **env)
 {
@@ -23,44 +34,46 @@ void	process_linee(char *line, char **env)
 
 	tokens = tokenize_input(line);
 	if (tokens)
-	{
+	{		
+		
+		print_tokens(tokens);
 		commands = parse_tokens(tokens);	
-
-		 if (commands->redirections)
-            {
-               g_vars.in_pipe = 2;
-            }
-		if (commands)
+		print_command(commands);
+		if (commands->name)
 		{
 			if (commands->next)
 			{
 				handle_pipes(commands, env);
 			}
 			else
+			{
 				execute_single_cmd(commands, env);
+			}
 			free_command_list(commands);
 		}
 		free_tokens(tokens);
 	}
 }
 
-void	init_shell(char **env)
+void    init_shell(char **env)
 {
-	char	*line;
+    char    *line;
 
-	while (1)
-	{
-		line = readline("\033[3;32mminishell$ \033[0m");
-		
-		if (line == NULL)
-			break ;
-		if (ft_strlen(line) > 0)
-		{
-			process_linee(line, env);
-			add_history(line);
-		}
-		free(line);
-	}
+    while (1)
+    {
+
+        all_signals();
+        line = readline("\033[3;32mminishell$ \033[0m");
+	
+        if (!line)
+            break;              
+        if (line)
+        {
+            process_linee(line, env);
+            add_history(line);
+        }
+        free(line);
+    }
 }
 
 char	**create_env(void)
@@ -99,7 +112,6 @@ int	main(int argc, char **argv, char **env)
 {
 	(void)argc;
 	(void)argv;
-	
 	g_vars.khbi = -1;
 	g_vars.heredoc_interrupted = 0;
 	g_vars.in_pipe = 0;
@@ -109,7 +121,6 @@ int	main(int argc, char **argv, char **env)
 	}
 	g_vars.env = env;
 	increment_shlvl(g_vars.env);
-	all_signals();
 	init_shell(env);
 	return (g_vars.exit_status);
 }

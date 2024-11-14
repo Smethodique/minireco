@@ -69,17 +69,3 @@ t_token	*tokenize_input(const char *input)
 	return (state.tokens);
 }
 
-void	sigint_handler(int sig)
-{
-	g_vars.exit_status = 130;
-	if (sig == SIGINT)
-	{
-		if (!g_vars.in_pipe)
-		{
-			write(1, "\n", 1);
-			rl_on_new_line();
-			rl_replace_line("", 0);
-			rl_redisplay();
-		}
-	}
-}

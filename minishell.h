@@ -42,10 +42,10 @@ typedef struct s_global_vars
 	int						heredoc_interrupted;
 	int						khbi;
 	int						in_pipe;
-	 char				*current_dir;
-	 char				*saved_oldpwd;
-	 int 				flag_check;
-	 int 				in_fd;
+	char					*current_dir;
+	char					*saved_oldpwd;
+	int						flag_check;
+	int						in_fd;
 
 }							t_global_vars;
 
@@ -181,6 +181,9 @@ typedef struct s_redirection
 	char					*filename;
 	struct s_redirection	*next;
 	int						new_fd;
+	int						output_fd;
+	char					buffer[4096];
+	ssize_t					bytes_read;
 
 }							t_redirection;
 
@@ -270,14 +273,14 @@ typedef struct s_quote_vars
 
 typedef struct s_parse_context
 {
-	t_command			*command_list;
-	t_command			*current_command;
-	int					status;
-	char				*env_value;
-	char				*heredoc_content;
-	char				temp_filename[sizeof("/tmp/minishell_heredocXXXXXX")];
-	int					fd;
-	char				exit_status_str[12];
+	t_command				*command_list;
+	t_command				*current_command;
+	int						status;
+	char					*env_value;
+	char					*heredoc_content;
+	char					temp_filename[sizeof("/tmp/minishell_heredocXXXXXX")];
+	int						fd;
+	char					exit_status_str[12];
 }							t_parse_context;
 
 typedef struct s_env_var_data
@@ -349,14 +352,15 @@ void						initialize_state(t_lexer_state *state,
 int							handle_heredoc_cases(t_lexer_state *state,
 								const char *input);
 int							handle_whitespace(t_lexer_state *state);
-void						update_env_variable(char **env,  char *var,
-								 char *value);
+void						update_env_variable(char **env, char *var,
+								char *value);
 void						update_wds(char **env, const char *wd);
 bool						chdir_errno_mod(const char *path);
 bool						change_dir(char **env, char *path);
 void						handle_tilde(char **env, char **path);
 void						cd(t_command *cmd);
 int							handle_pipe(t_lexer_state *state);
+void						reset_after_heredoc(void);
 t_command					*new_command(void);
 int							myrand(void);
 int							create_temp_file(char *template);
@@ -448,6 +452,8 @@ void						parse_token_four(t_parse_context *ctx,
 void						parse_token_five(t_parse_context *ctx,
 								t_token **tokens);
 int							myrand(void);
+void						execute_external_command(t_command *current,
+								char **env);
 int							create_temp_file(char *template);
 int							my_mkstemp(char *template);
 char						*expand_env_vars(char *input);
@@ -481,14 +487,15 @@ void						determine_fds(int *in_fd, int *out_fd, int in_pipe,
 void						close_pipe_fds(int i, t_command *current,
 								int pipes[2][2]);
 void						wait_for_children(pid_t *pids, int pipe_count);
-void	setup_redirections_v2(t_command *cmd, int in_fd, int out_fd);
+void						setup_redirections_v2(t_command *cmd, int in_fd,
+								int out_fd);
 void						handle_pipes(t_command *commands, char **env);
 void						add_to_env(char ***env, char *new_var);
 int							double_pointer_len(char **str);
 void						ft_setter(int value);
 int							ft_getter(void);
 int							is_builtin(t_command *cmd);
-void	setup_redirection(t_command *cmd);
+void						setup_redirection(t_command *cmd);
 int							is_num(char *str);
 void						export(t_command *cmd);
 int							check_export(char *cmd);
@@ -517,7 +524,8 @@ void						restore_fd(int in, int out, int new_in,
 								int new_out);
 int							get_out(t_command *cmd, int fd_out);
 int							get_in(t_redirection *red, int fd_in);
-void setup_redirections_v2(t_command *cmd, int in_fd, int out_fd);
+void						setup_redirections_v2(t_command *cmd, int in_fd,
+								int out_fd);
 
 char						**create_env(void);
 void						dup_in_out(int in, int out);
