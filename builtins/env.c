@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/29 04:13:16 by nel-ouar         ###   ########.fr       */
+/*   Updated: 2024/11/16 23:29:18 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,8 @@ void	env(t_command *cmd)
 
 	i = 1;
 	new_env = NULL;
-	if (cmd->args && cmd->args[1] && ft_strcmp(cmd->args[1], "-i") == 0
-		&& ft_strcmp(cmd->args[2], "./minishell") == 0)
+	if (cmd->args && cmd->args[1] && ft_strcmp(cmd->args[1], "-i") == 0)
 	{
-		g_vars.env = NULL;
 		g_vars.env = create_env();
 		return ;
 	}
@@ -86,5 +84,5 @@ void	env(t_command *cmd)
 	}
 	if (g_vars.env == NULL || g_vars.env[0] == NULL)
 		create_env();
-	ft_setter(0);
+	ft_setter(0);	
 }

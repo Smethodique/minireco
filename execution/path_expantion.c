@@ -72,7 +72,7 @@ int	check_file(const char *path, int mode)
 	}
 	else if (mode == O_RDONLY)
 	{
-		return(-1);
+		return (-1);
 	}
 	return (0);
 }

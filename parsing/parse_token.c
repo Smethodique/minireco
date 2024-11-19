@@ -76,7 +76,8 @@ t_command	*parse_tokens(t_token *tokens)
 	ctx.command_list = NULL;
 	ctx.current_command = NULL;
 	if (check_heredoc_delim(tokens) == 0 || !validate_syntax(tokens))
-			return (ft_putstr_fd("Error: Invalid syntax\n", 2),g_vars.exit_status = 2, NULL);
+		return (ft_putstr_fd("Error: Invalid syntax\n", 2),
+			g_vars.exit_status = 2, NULL);
 	while (tokens)
 	{
 		all_parse(&ctx, &tokens);

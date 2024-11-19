@@ -3,29 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/29 04:02:10 by nel-ouar         ###   ########.fr       */
+/*   Updated: 2024/11/17 00:00:21 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 t_global_vars	g_vars;
-
-void print_command(t_command *cmd)
-{
-	int i;
-
-	i = 0;
-	printf("Command: %s\n", cmd->args[0]);
-	while (cmd->args[i])
-	{
-		printf("Arg %d: %s\n", i, cmd->args[i]);
-		i++;
-	}
-}
 
 void	process_linee(char *line, char **env)
 {
@@ -34,12 +21,10 @@ void	process_linee(char *line, char **env)
 
 	tokens = tokenize_input(line);
 	if (tokens)
-	{		
-		
+	{
 		print_tokens(tokens);
-		commands = parse_tokens(tokens);	
-		print_command(commands);
-		if (commands->name)
+		commands = parse_tokens(tokens);
+		if (commands && commands->name)
 		{
 			if (commands->next)
 			{
@@ -53,27 +38,30 @@ void	process_linee(char *line, char **env)
 		}
 		free_tokens(tokens);
 	}
+	return ;
 }
 
-void    init_shell(char **env)
+void	init_shell(char **env)
 {
-    char    *line;
+	char	*line;
 
-    while (1)
-    {
-
-        all_signals();
-        line = readline("\033[3;32mminishell$ \033[0m");
-	
-        if (!line)
-            break;              
-        if (line)
-        {
-            process_linee(line, env);
-            add_history(line);
-        }
-        free(line);
-    }
+	while (1)
+	{
+		all_signals();
+		line = readline("\033[3;32mminishell$ \033[0m");
+		if (!line)
+		{
+			if(g_vars.env[1][6] >= '2' && g_vars.env[3] == NULL)
+				printf("\n");
+			break ; 
+		}
+		if (line)
+		{
+			process_linee(line, env);
+			add_history(line);
+		}
+		free(line);
+	}
 }
 
 char	**create_env(void)
@@ -89,10 +77,9 @@ char	**create_env(void)
 	}
 	env[0] = ft_strjoin("PWD=", cwd);
 	env[1] = ft_strdup("SHLVL=1");
-	env[2] = ft_strdup("_=./minishell");
-	env[3] = ft_strdup("PATH=/usr/local/sbin:/usr/local/bin:"
+	env[2] = ft_strdup("PATH=/usr/local/sbin:/usr/local/bin:"
 			"/usr/sbin:/usr/bin:/sbin:/bin");
-	env[4] = NULL;
+	env[3] = NULL;
 	return (env);
 }
 
@@ -124,4 +111,3 @@ int	main(int argc, char **argv, char **env)
 	init_shell(env);
 	return (g_vars.exit_status);
 }
-

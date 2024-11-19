@@ -19,7 +19,23 @@ void	handle_special_env_var(char *env_var, t_token **tokens)
 
 	(void)env_var;
 	exit_status_str = ft_itoa(g_vars.exit_status);
-	new_tok = new_token(ARG, exit_status_str);
+	if (is_quoted(exit_status_str))
+		new_tok = new_token(ARG, exit_status_str);
+	else
+	{
+		char **split_value = ft_split(exit_status_str, " \t");
+		int j = 0;
+		while (split_value[j] != NULL)
+		{
+			new_tok = new_token(ARG, split_value[j]);
+			if (split_value[j + 1] != NULL)
+				new_tok->space = 1;
+			add_token(tokens, new_tok);
+			free(split_value[j]);
+			j++;
+		}
+		free(split_value);
+	}
 	add_token(tokens, new_tok);
 	free(exit_status_str);
 }
@@ -69,7 +85,8 @@ void	extract_env_var(const char *input, int *i, int len, char **env_var)
 {
 	int	start;
 
-	start = (*i)++;
+	start = *i;
+	(*i)++;
 	if (*i < len && input[*i] == '?')
 		(*i)++;
 	else if (*i < len && (ft_isalnum(input[*i]) || input[*i] == '_'))
@@ -92,6 +109,7 @@ void	handle_env_var(const char *input, int *i, int len, t_token **tokens)
 	t_token	*last_token;
 
 	extract_env_var(input, i, len, &env_var);
+	printf("env_var: %s\n", env_var);
 	if (env_var[0] == '$' && env_var[1] == '\0')
 	{
 		add_token(tokens, new_token(ARG, env_var));

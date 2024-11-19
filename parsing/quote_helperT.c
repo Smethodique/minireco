@@ -29,7 +29,7 @@ static void	pro_quotes(const char *str, char *result, int len)
 	{
 		if (str[state.i] == '"')
 		{
-			 if (!state.in_single_quotes)
+			if (!state.in_single_quotes)
 				state.in_double_quotes = !state.in_double_quotes;
 			else
 				result[state.j++] = str[state.i];

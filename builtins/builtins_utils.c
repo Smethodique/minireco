@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/24 15:27:58 by nel-ouar         ###   ########.fr       */
+/*   Updated: 2024/11/16 16:31:17 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,26 +47,26 @@ int	double_pointer_len(char **str)
 	return (i);
 }
 
-void increment_shlvl(char **env)
+void	increment_shlvl(char **env)
 {
-    int     i;
-    int     shlvl;
-    char    *tmp;
-    
-    i = 0;
-    while (env[i])
-    {
-        if (ft_strncmp(env[i], "SHLVL=", 6) == 0)
-        {
-            shlvl = atoi(env[i] + 6);
-            shlvl++;
-            tmp = ft_itoa(shlvl);
-            if (!tmp)
-                return;        
-            env[i] = ft_strjoin("SHLVL=", tmp);
-            free(tmp);
-            return;
-        }
-        i++;
-    }
+	int		i;
+	int		shlvl;
+	char	*tmp;
+
+	i = 0;
+	while (env[i])
+	{
+		if (ft_strncmp(env[i], "SHLVL=", 6) == 0)
+		{
+			shlvl = atoi(env[i] + 6);
+			shlvl++;
+			tmp = ft_itoa(shlvl);
+			if (!tmp)
+				return ;
+			env[i] = ft_strjoin("SHLVL=", tmp);
+			free(tmp);
+			return ;
+		}
+		i++;
+	}
 }

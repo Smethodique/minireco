@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 12:10:05 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/28 23:59:15 by nel-ouar         ###   ########.fr       */
+/*   Updated: 2024/11/16 23:03:13 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,6 +240,8 @@ typedef struct s_pipe_data
 	t_command				*current;
 	int						in_fd;
 	int						out_fd;
+	int 					*prev_pipe;
+	int 					*curr_pipe;
 }							t_pipe_data;
 
 typedef struct s_expand_vars
@@ -273,15 +275,15 @@ typedef struct s_quote_vars
 
 typedef struct s_parse_context
 {
-	t_command				*command_list;
-	t_command				*current_command;
-	int						status;
-	char					*env_value;
-	char					*heredoc_content;
-	char					temp_filename[sizeof("/tmp/minishell_heredocXXXXXX")];
-	int						fd;
-	char					exit_status_str[12];
-}							t_parse_context;
+	t_command	*command_list;
+	t_command	*current_command;
+	int			status;
+	char		*env_value;
+	char		*heredoc_content;
+	char		temp_filename[sizeof("/tmp/minishell_heredocXXXXXX")];
+	int			fd;
+	char		exit_status_str[12];
+}				t_parse_context;
 
 typedef struct s_env_var_data
 {
@@ -530,4 +532,26 @@ void						setup_redirections_v2(t_command *cmd, int in_fd,
 char						**create_env(void);
 void						dup_in_out(int in, int out);
 void						handle_exit_status(int status);
+void						init_current_dir(void);
+char						*build_path(char *base, char *path);
+char						*get_current_dir(void);
+void						update_current_dir(char *new_path);
+void						close_prev_pipe(int prev_pipe[2]);
+void						update_prev_pipe(int prev_pipe[2],
+								int curr_pipe[2]);
+void						wait_for_children_and_cleanup(t_pipe_data *data);
+void						execute_external_command(t_command *current,
+								char **env);
+void						setup_child_process(int prev_pipe[2],
+								int curr_pipe[2], t_command *current,
+								char **env);
+void						handle_pipes_in_child(int prev_pipe[2],
+								int curr_pipe[2]);
+bool						setup_next_pipe(int curr_pipe[2],
+								t_command *current);
+bool						initialize_pipe_data(t_pipe_data *data,
+								t_command *commands);
+void						handle_command_execution(t_command *current,
+								char **env);
+
 #endif

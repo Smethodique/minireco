@@ -3,38 +3,42 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/24 15:27:14 by nel-ouar         ###   ########.fr       */
+/*   Updated: 2024/11/16 16:25:06 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-#include <unistd.h> // Include for getcwd
 
-char *get_current_dire(void)
+char	*get_current_dire(void)
 {
-	char *cwd;
+	char	*cwd;
+	char	*oldpwd;
+	char	*pwd;
+	char	*newpath;
 
 	cwd = getcwd(NULL, 0);
 	if (cwd)
-		return cwd;
-	if(g_vars.current_dir)
-		return ft_strdup(g_vars.current_dir);
-	else 
+		return (cwd);
+	if (g_vars.current_dir)
+		return (ft_strdup(g_vars.current_dir));
+	else
 	{
-		char *oldpwd = get_env_value("OLDPWD", g_vars.env);
-		char *pwd    = get_env_value("PWD", g_vars.env);
-		char *newpath  = ft_strjoin(oldpwd, pwd);
+		oldpwd = get_env_value("OLDPWD", g_vars.env);
+		pwd = get_env_value("PWD", g_vars.env);
+		newpath = ft_strjoin(oldpwd, pwd);
 		ft_strdup(newpath);
-		return(newpath);
+		return (newpath);
 	}
 }
 
 int	pwd(t_command *cmd, char **env)
 {
 	char	*current_dir;
+	char	*oldpwd;
+	int		i;
 
 	(void)cmd;
 	(void)env;
@@ -42,19 +46,19 @@ int	pwd(t_command *cmd, char **env)
 	current_dir = get_current_dire();
 	if (!current_dir)
 	{
-		char *oldpwd = ft_strjoin("OLDPWD=", current_dir);
-		int i = 0;
+		oldpwd = ft_strjoin("OLDPWD=", current_dir);
+		i = 0;
 		while (g_vars.env[i])
 		{
 			if (ft_strncmp(g_vars.env[i], "OLDPWD=", 7) == 0)
 			{
 				g_vars.env[i] = oldpwd;
-				break;
+				break ;
 			}
 			i++;
 		}
 	}
 	else
-	printf("%s\n", current_dir);
+		printf("%s\n", current_dir);
 	return (0);
 }

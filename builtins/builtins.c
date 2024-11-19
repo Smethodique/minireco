@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/24 15:27:55 by nel-ouar         ###   ########.fr       */
+/*   Updated: 2024/11/16 23:17:34 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,6 @@ void	execute_builtin(t_command *cmd, char **environment, int index)
 {
 	if (index == 1)
 		cd(cmd);
-	
 	else if (index == 2)
 		export(cmd);
 	else if (index == 3)
@@ -94,9 +93,10 @@ void	execute_builtin(t_command *cmd, char **environment, int index)
 		pwd(cmd, environment);
 	else if (index == 6)
 		ft_exit(cmd);
-	else if(index == 10)
+	else if (index == 10)
+	{
 		env(cmd);
-
+	}
 	else
 		g_vars.exit_status = 0;
 }
@@ -105,8 +105,8 @@ int	is_builtin(t_command *cmd)
 {
 	if (ft_strcmp(cmd->args[0], "cd") == 0)
 	{
-		if(cmd->args[0] == NULL)
-			return -1;
+		if (cmd->args[0] == NULL)
+			return (-1);
 		return (1);
 	}
 	else if (ft_strcmp(cmd->args[0], "env") == 0)

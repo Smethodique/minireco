@@ -25,33 +25,28 @@ void	parse_token_one(t_parse_context *ctx, t_token **tokens)
 	}
 }
 
-void parse_token_three(t_parse_context *ctx, t_token **tokens)
+void	parse_token_three(t_parse_context *ctx, t_token **tokens)
 {
-    if ((*tokens)->type == INPUT || (*tokens)->type == OUTPUT
-        || (*tokens)->type == APPEND)
-    {
-        if (!ctx->current_command)
-        {
-            ctx->current_command = new_command();
-            add_command(&ctx->command_list, ctx->current_command);
-        }
-        if (!(*tokens)->next || ((*tokens)->next->type != FILENAME
-                && (*tokens)->next->type != ARG))
-        {
-            ft_putstr_fd("Error: Missing filename after redirection\n", 2);
-            return ;
-        }
-
-        // Add the redirection
-        add_redirection(ctx->current_command, (*tokens)->type,
-            (*tokens)->next->value);
-        
-        // Move to next token
-        *tokens = (*tokens)->next;
-    }
+	if ((*tokens)->type == INPUT || (*tokens)->type == OUTPUT
+		|| (*tokens)->type == APPEND)
+	{
+		if (!ctx->current_command)
+		{
+			ctx->current_command = new_command();
+			add_command(&ctx->command_list, ctx->current_command);
+		}
+		if (!(*tokens)->next || ((*tokens)->next->type != FILENAME
+				&& (*tokens)->next->type != ARG))
+		{
+			ft_putstr_fd("Error: Missing filename after redirection\n", 2);
+			return ;
+		}
+		add_redirection(ctx->current_command, (*tokens)->type,
+			(*tokens)->next->value);
+		*tokens = (*tokens)->next;
+	}
 }
- 
- 
+
 void	parse_token_four(t_parse_context *ctx, t_token **tokens)
 {
 	if ((*tokens)->type == HEREDOC)
@@ -73,13 +68,12 @@ void	parse_token_four(t_parse_context *ctx, t_token **tokens)
 			write(ctx->fd, ctx->heredoc_content,
 				ft_strlen(ctx->heredoc_content));
 			free(ctx->heredoc_content);
-		}        
+		}
 		close(ctx->fd);
 		add_redirection(ctx->current_command, HEREDOC, ctx->temp_filename);
 		*tokens = (*tokens)->next;
 	}
 }
-
 
 void	parse_token_five(t_parse_context *ctx, t_token **tokens)
 {

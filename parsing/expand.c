@@ -35,6 +35,7 @@ char	*process_quotes(t_expansion *exp)
 	free(exp->result);
 	exp->result = exp->new_result;
 	exp->temp++;
+	
 	return (exp->result);
 }
 
@@ -58,15 +59,33 @@ char	*get_env_value(char *name, char **env)
 	return (NULL);
 }
 
-char	*expand_env_variable(t_expansion *exp, char **env)
+void	handle_env_exit_status(t_expansion *exp, char **env)
+{
+	char	*exit_status_str;
+	char	*new_result;
+
+	(void)env;
+	exit_status_str = ft_itoa(g_vars.exit_status);
+	new_result = ft_strjoin(exp->result, exit_status_str);
+	free(exp->result);
+	exp->result = new_result;
+	exp->temp = exp->env_pos + 2;
+	free(exit_status_str);
+}
+
+char *expand_env_variable(t_expansion *exp, char **env)
 {
 	exp->before_env = ft_substr(exp->temp, 0, exp->env_pos - exp->temp);
 	exp->new_result = ft_strjoin(exp->result, exp->before_env);
 	free(exp->result);
 	free(exp->before_env);
 	exp->result = exp->new_result;
+	if (exp->env_pos[1] == '?') {
+	   handle_env_exit_status(exp, env);
+	   return (exp->result);
+	}
 	exp->env_len = 0;
-	while (exp->env_pos[1 + exp->env_len] && (ft_isalnum(exp->env_pos[1
+	while (exp->env_pos[1 + exp->env_len] && (ft_isalnum(exp->env_pos[1 
 					+ exp->env_len]) || exp->env_pos[1 + exp->env_len] == '_'))
 		exp->env_len++;
 	exp->env_name = ft_substr(exp->env_pos + 1, 0, exp->env_len);

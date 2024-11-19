@@ -61,11 +61,10 @@ t_token	*tokenize_input(const char *input)
 			continue ;
 		handle_command_or_argument(input, &state.i, state.len, &state.tokens);
 		if (state.i >= state.len)
-			return (state.tokens);	
+			return (state.tokens);
 		if (!state.tokens)
 			return (free_tokens(state.tokens), NULL);
-   }
+	}
 	concatinate(&state.tokens);
 	return (state.tokens);
 }
-

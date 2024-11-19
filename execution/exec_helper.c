@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_helper.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/24 15:28:03 by nel-ouar         ###   ########.fr       */
+/*   Updated: 2024/11/16 22:27:14 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,7 @@ char	*check_path(char **cmd, char **path)
 		i++;
 	}
 	ft_free(path);
-
-	 return (NULL);
+	return (NULL);
 }
 
 char	*plo(char **cmd)
@@ -64,12 +63,11 @@ char	*get_path(char **cmd)
 	int		i;
 	char	**path;
 	char	*env_path;
-        
 
-		if ( (cmd[0][0] == '/' || (cmd[0][0] == '.' && cmd[0][1] == '/')))
-		{
-			return (plo(cmd));
-		}
+	if ((cmd[0][0] == '/' || (cmd[0][0] == '.' && cmd[0][1] == '/')))
+	{
+		return (plo(cmd));
+	}
 	env_path = NULL;
 	i = 0;
 	while (g_vars.env[i])
@@ -84,53 +82,5 @@ char	*get_path(char **cmd)
 	if (env_path == NULL || *env_path == '\0')
 		return (NULL);
 	path = ft_split(env_path, ":");
-	
 	return (check_path(cmd, path));
-}
-void execute_child_h(char **cmd, char *path)
-{
-	ft_putstr_fd("minishell: ", 2);
-	if (errno == EACCES && get_path(cmd) == NULL)
-	{
-		ft_putstr_fd(path, 2);
-		ft_putstr_fd(": Permission denied\n", 2);
-		free(path);
-		exit(126);
-	}
-	else
-	{
-		ft_putstr_fd(cmd[0], 2);
-		if (cmd[0][0] == '.' && cmd[0][1] == '/')
-		{
-			ft_putstr_fd(": permission denied\n", 2);
-			exit(126);
-		}
-		ft_putstr_fd(": command not found\n", 2);
-		free(path);			
-		exit(127);
-	}
-}
-void	execute_child(char **cmd, char *path)
-{
-	struct stat	path_stat;
-
-	if (stat(path, &path_stat) == -1)
-	{
-		perror(cmd[0]);
-		free(path);
-		exit(127);
-	}
-	if (S_ISDIR(path_stat.st_mode))
-	{
-	    perror(path);
-		free(path);
-		exit(126);
-	}
-
-	if (execve(path, cmd, g_vars.env) == -1 )
-	{
-		execute_child_h(cmd, path);
-	}
-	free(path);
-	exit(1);
 }

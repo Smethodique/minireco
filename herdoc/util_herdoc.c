@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h" 
+#include "../minishell.h"
 #include <fcntl.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -93,7 +93,6 @@ static char	*read_heredoc_content(t_heredoc *hd)
 	}
 	return (hd->content);
 }
-
 
 char	*handle_heredoc(const char *delimiter, int expand_vars)
 {
