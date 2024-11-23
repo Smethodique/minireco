@@ -70,17 +70,14 @@ void	add_command(t_command **list, t_command *cmd)
 {
 	t_command	*current;
 
-	if (*list == NULL)
+
+	if (!*list)
 	{
 		*list = cmd;
+		return ;
 	}
-	else
-	{
-		current = *list;
-		while (current->next)
-		{
-			current = current->next;
-		}
-		current->next = cmd;
-	}
+	current = *list;
+	while (current->next)
+		current = current->next;
+	current->next = cmd;
 }

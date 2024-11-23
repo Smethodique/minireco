@@ -36,6 +36,7 @@ int	handle_special_cases(t_lexer_state *state, const char *input)
 	if (state->current_char == '$')
 	{
 		handle_env_var(input, &state->i, state->len, &state->tokens);
+		printf("here\n");
 		return (1);
 	}
 	return (0);

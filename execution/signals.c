@@ -46,11 +46,13 @@ void	reset_after_heredoc(void)
 
 void	sigint_handler(int sig)
 {
-	g_vars.exit_status = 130;
+	g_vars.exit_status = 130;	
+
 	if (sig == SIGINT)
 	{
 		if (!g_vars.in_pipe && g_vars.heredoc_interrupted == 0)
 		{
+		
 			write(1, "\n", 1);
 			rl_on_new_line();
 			rl_replace_line("", 0);
@@ -64,4 +66,6 @@ void	sigint_handler(int sig)
 			rl_redisplay();
 		}
 	}
+	
+
 }

@@ -39,7 +39,6 @@ void	execute_child_h(char **cmd, char *path)
 void	execute_child(char **cmd, char *path)
 {
 	struct stat	path_stat;
-
 	if (stat(path, &path_stat) == -1)
 	{
 		perror(cmd[0]);
@@ -48,12 +47,13 @@ void	execute_child(char **cmd, char *path)
 	}
 	if (S_ISDIR(path_stat.st_mode))
 	{
-		perror(path);
+	  	printf("minishell: %s: is a directory\n", cmd[0]);
 		free(path);
 		exit(126);
 	}
 	if (execve(path, cmd, g_vars.env) == -1)
 	{
+		printf("minishell: %s: %s\n", cmd[0], strerror(errno));
 		execute_child_h(cmd, path);
 	}
 	free(path);

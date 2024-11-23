@@ -69,6 +69,8 @@ void	all_parse(t_parse_context *ctx, t_token **tokens)
 	parse_token_four(ctx, tokens);
 }
 
+
+
 t_command	*parse_tokens(t_token *tokens)
 {
 	t_parse_context	ctx;
@@ -86,9 +88,7 @@ t_command	*parse_tokens(t_token *tokens)
 			parse_token_five(&ctx, &tokens);
 			if (g_vars.heredoc_interrupted)
 			{
-				g_vars.heredoc_interrupted = 0;
 				g_vars.exit_status = 130;
-				printf("g_vars.exit_status = %d\n", g_vars.exit_status);
 				return (ctx.command_list);
 			}
 		}

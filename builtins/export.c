@@ -16,28 +16,31 @@ void	export_helper(char *cmd, char ***env, int len)
 {
 	int		x;
 	char	*new_var;
-
+	int         i;
+	
+	i=0;
+	printf("cmd: %s\n", cmd);
 	x = check_env(cmd, *env);
-	if (ft_strchr(cmd, '+') && ft_strchr(cmd, '='))
+	while(cmd[i] != '=')
+		i++;
+	if (cmd[i + 1] == '+'  && cmd[i + 2] == '=')
 	{
 		append_export(cmd, env, len);
 		return ((void)len);
 	}
-	if (x && ft_strchr(cmd, '=') && (length(cmd) == length((*env)[x])))
+	printf("x: %d\n", x);
+	if (x)
 	{
-		if ((*env)[x])
-			(*env)[x] = ft_strdup(cmd);
+		free((*env)[x]);
+		printf("cmd1: %s\n", cmd);
+		(*env)[x] = ft_strdup(cmd);
 	}
-	else if (!check_env(cmd, *env))
+	else
 	{
-		if (ft_strchr(cmd, '='))
-		{
-			new_var = ft_strdup(cmd);
-			add_to_envp(env, new_var);
-			free(new_var);
-		}
-		else
-			add_to_envp(env, cmd);
+		new_var = ft_strdup(cmd);
+		printf("cmd2: %s\n", cmd);
+		add_to_env(env, new_var);
+		free(new_var);
 	}
 }
 

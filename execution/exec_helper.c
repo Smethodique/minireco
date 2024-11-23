@@ -63,9 +63,12 @@ char	*get_path(char **cmd)
 	int		i;
 	char	**path;
 	char	*env_path;
-
-	if ((cmd[0][0] == '/' || (cmd[0][0] == '.' && cmd[0][1] == '/')))
+		if (!cmd[0])
+		return (NULL);
+	if(ft_strchr(cmd[0], '/'))
 	{
+		if(!cmd)
+			return (NULL);
 		return (plo(cmd));
 	}
 	env_path = NULL;

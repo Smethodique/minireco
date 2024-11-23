@@ -77,8 +77,7 @@ char	**create_env(void)
 	}
 	env[0] = ft_strjoin("PWD=", cwd);
 	env[1] = ft_strdup("SHLVL=1");
-	env[2] = ft_strdup("PATH=/usr/local/sbin:/usr/local/bin:"
-			"/usr/sbin:/usr/bin:/sbin:/bin");
+	env[2] = ft_strdup("_=/usr/bin/env");
 	env[3] = NULL;
 	return (env);
 }
@@ -102,6 +101,7 @@ int	main(int argc, char **argv, char **env)
 	g_vars.khbi = -1;
 	g_vars.heredoc_interrupted = 0;
 	g_vars.in_pipe = 0;
+	g_vars.env_allocated = 0;
 	if (env == NULL || env[0] == NULL)
 	{
 		env = create_env();

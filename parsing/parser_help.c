@@ -35,15 +35,23 @@ void	handle_heredoc_delim(const char *input, int *i, int len,
 	char	*delimiter;
 
 	while (*i < len && ft_isspace(input[*i]))
-	{
 		(*i)++;
-	}
 	start = *i;
-	while (*i < len && !ft_isspace(input[*i]))
-	{
+	while (*i < len && !ft_isspace(input[*i]) && input[*i] != '<'
+		&& input[*i] != '>' && input[*i] != '|')
 		(*i)++;
+	if (input[start] == '<' && input[start + 1] == '<')
+	{
+		handlee_heredoc(i, tokens);
+		return ;
 	}
-	delimiter = ft_substr(input, start, *i - start);
+	delimiter = ft_strndup(input + start, *i - start);
+	if (!delimiter || delimiter[0] == '\0')
+	{
+		free(delimiter);
+		printf("Error: Invalid syntax\n");
+		return ;
+	}
 	add_token(tokens, new_token(DELIMITER, delimiter));
 	free(delimiter);
 }

@@ -37,18 +37,23 @@ void	home(char *oldpwd)
 {
 	char	*home_path;
 
-	home_path = getenv("HOME");
-	if (home_path)
-	{
-		chdir(home_path);
-		update_env_variable(g_vars.env, "OLDPWD", oldpwd);
-		update_env_variable(g_vars.env, "PWD", home_path);
-	}
-	else
+	home_path = get_env_value("HOME", g_vars.env);
+	if (!home_path)
 	{
 		ft_putstr_fd("minishell: cd: HOME not set\n", 2);
 		g_vars.exit_status = 1;
+		return ;
 	}
+	if (oldpwd)
+		update_env_variable(g_vars.env, "OLDPWD=", oldpwd);
+	if (chdir(home_path) == -1)
+
+	{
+		ft_putstr_fd("minishell: cd: HOME not accessible\n", 2);
+		g_vars.exit_status = 1;
+		return ;
+	}
+	update_current_dir(home_path);
 }
 
 void	update_current_dir(char *new_path)
@@ -94,7 +99,7 @@ void	cd(t_command *cmd)
 		free(current);
 	}
 	if (cmd->arg_count == 1)
-		home(g_vars.saved_oldpwd);
+		home(g_vars.current_dir);
 	else if (cmd->arg_count == 2)
 	{
 		if (ft_strcmp(cmd->args[1], "-") == 0)

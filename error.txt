@@ -1,0 +1,21 @@
+
+reset exit status after exit from herdoc (130 to 0);
+for exemple : 
+minishell$ 
+minishell$ echo $?
+here
+Type: 0, Value: echo
+Type: 1, Value: 130
+minishell$ echo $?
+here
+Type: 0, Value: echo
+Type: 1, Value: 130
+minishell$ echo $?
+here
+Type: 0, Value: echo
+Type: 1, Value: 130
+minishell$ echo $?
+here
+Type: 0, Value: echo
+Type: 1, Value: 130
+minishell$ 

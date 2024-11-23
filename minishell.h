@@ -46,6 +46,7 @@ typedef struct s_global_vars
 	char					*saved_oldpwd;
 	int						flag_check;
 	int						in_fd;
+	int						env_allocated;
 
 }							t_global_vars;
 

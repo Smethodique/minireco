@@ -71,8 +71,8 @@ int	handle_output_redirection(t_redirection *red, int fd_out)
 	char	*expanded;
 
 	expanded = expand_variables(ft_strdup(red->filename));
-	if (ft_strlen(expanded) == 0
-		|| check_directory(get_directory_path(expanded), 1) == -1)
+
+	if (ft_strlen(expanded) == 0)
 	{
 		ft_putstr_fd("ambiguous redirect\n", 2);
 		free(expanded);

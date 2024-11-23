@@ -21,7 +21,9 @@ void	print_export(char *env)
 	if (ft_strchr(env, '='))
 	{
 		while (env[i] != '=')
+		{
 			printf("%c", env[i++]);
+		}
 		printf("=\"");
 		i++;
 		printf("%s\"\n", (env + i));

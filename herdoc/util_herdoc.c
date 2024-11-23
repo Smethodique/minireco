@@ -110,6 +110,7 @@ char	*handle_heredoc(const char *delimiter, int expand_vars)
 	{
 		free(hd.content);
 		free(hd.unquoted_delimiter);
+		g_vars.heredoc_interrupted = 1;
 		return (NULL);
 	}
 	if (result)
