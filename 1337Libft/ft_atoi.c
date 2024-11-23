@@ -54,12 +54,12 @@ long double	ft_atoi(const char *str)
 	if (str[i] == '-' || str[i] == '+')
 		i++;
 	if (!(str[i] >= '0' && str[i] <= '9'))
-		exit(printf("Error\n") * 0 + 1);
+		exit(1);
 	while (ft_isdigit(str[i]))
 		res = (res * 10) + (str[i++] - '0');
 	if (res > 2147483647 || res < -2147483648)
 	{
-		ft_putstr_fd("Error\n", 2);
+		ft_putstr_fd("numeric argument required\n", 2);
 		exit(1);
 	}
 	return (res * sign);
