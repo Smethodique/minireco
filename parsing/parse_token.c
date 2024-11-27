@@ -86,13 +86,13 @@ t_command	*parse_tokens(t_token *tokens)
 		if (tokens)
 		{
 			parse_token_five(&ctx, &tokens);
-			if (g_vars.heredoc_interrupted)
-			{
-				g_vars.exit_status = 130;
-				return (ctx.command_list);
-			}
+			if(g_vars.heredoc_interrupted)
+				{
+					g_vars.heredoc_interrupted = 0;
+					return (NULL);
+				}
+			tokens = tokens->next;
 		}
-		tokens = tokens->next;
 	}
 	return (ctx.command_list);
 }

@@ -71,6 +71,8 @@ int	realloc_content(t_heredoc *hd)
 
 static char	*read_heredoc_content(t_heredoc *hd)
 {
+	hd->content = ft_strdup("");
+	hd->content_capacity = 1;
 	while (1)
 	{
 		hd->line = readline("> ");
@@ -79,42 +81,51 @@ static char	*read_heredoc_content(t_heredoc *hd)
 			free(hd->line);
 			break ;
 		}
-		if (ft_strcmp(hd->line, hd->unquoted_delimiter) == 0
-			|| !process_line(hd) || !realloc_content(hd))
+		if (ft_strcmp(hd->line, hd->unquoted_delimiter) == 0)
 		{
 			free(hd->line);
 			break ;
 		}
+		if (!process_line(hd) || !realloc_content(hd))
+			return (NULL);
 		ft_strcpy(hd->content + hd->content_size, hd->processed_line);
 		hd->content_size += hd->line_len;
 		hd->content[hd->content_size++] = '\n';
 		if (hd->expand_vars && hd->processed_line != hd->line)
 			free(hd->processed_line);
+		free(hd->line);
 	}
+	hd->content[hd->content_size] = '\0';
 	return (hd->content);
 }
 
-char	*handle_heredoc(const char *delimiter, int expand_vars)
+char    *handle_heredoc(const char *delimiter, int expand_vars, t_parse_context *ctx)
 {
-	t_heredoc	hd;
-	void		(*old_handler)(int);
-	char		*result;
+	t_heredoc    hd;
+	void        (*old_handler)(int);
+	char        *result;
+	pid_t       pid;
+	int         status;
 
+	(void)ctx;
 	g_vars.heredoc_interrupted = 0;
 	old_handler = signal(SIGINT, sigint_handlerh);
 	init_heredoc(&hd, delimiter, expand_vars);
-	result = read_heredoc_content(&hd);
-	signal(SIGINT, old_handler);
-	dup2(g_vars.khbi, 0);
-	if (g_vars.heredoc_interrupted)
+	pid = fork();
+	if (pid == 0)
 	{
-		free(hd.content);
-		free(hd.unquoted_delimiter);
-		g_vars.heredoc_interrupted = 1;
-		return (NULL);
+		signal(SIGINT, SIG_DFL);
+		result = read_heredoc_content(&hd);
+		if (!result)
+			exit(1);
+		write(ctx->fd, hd.content, hd.content_size);
+	   return (result);	
 	}
-	if (result)
-		result[hd.content_size] = '\0';
+	waitpid(pid, &status, 0);
+	signal(SIGINT, old_handler);
+	if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+		return (hd.content);
+	free(hd.content);
 	free(hd.unquoted_delimiter);
-	return (result);
+	return (NULL);
 }

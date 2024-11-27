@@ -18,7 +18,6 @@ void	process_linee(char *line, char **env)
 {
 	t_token		*tokens;
 	t_command	*commands;
-
 	tokens = tokenize_input(line);
 	if (tokens)
 	{
@@ -47,6 +46,7 @@ void	init_shell(char **env)
 
 	while (1)
 	{
+		
 		all_signals();
 		line = readline("\033[3;32mminishell$ \033[0m");
 		if (!line)

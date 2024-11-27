@@ -342,8 +342,7 @@ int							my_mkstemp(char *template);
 char						*expand_variables(const char *str);
 void						increment_shlvl(char **env);
 void						append_export(char *cmd, char ***env, int len);
-char						*handle_heredoc(const char *delimiter,
-								int expand_vars);
+
 int							ft_isspace(char c);
 void						handle_command_or_argument(const char *input,
 								int *i, int len, t_token **tokens);
@@ -386,8 +385,7 @@ void						append_line_to_content(t_heredoc *hdoc);
 void						heredoc_signals(void);
 
 void						reset_signals(void);
-char						*handle_heredoc(const char *delimiter,
-								int expand_vars);
+char						*handle_heredoc(const char *delimiter, int expand_vars , t_parse_context *ctx);
 int							read_and_process_line(t_heredoc *hdoc,
 								int expand_vars);
 void						cleanup_heredoc(t_heredoc *hdoc);
@@ -461,8 +459,7 @@ int							create_temp_file(char *template);
 int							my_mkstemp(char *template);
 char						*expand_env_vars(char *input);
 void						sigint_handlerh(int sig);
-char						*handle_heredoc(const char *delimiter,
-								int expand_vars);
+
 pid_t						execute_piped_command(t_command *cmd, int in_fd,
 								int out_fd, char **env);
 void						update_old_pwd(char *old_pwd, char **env);
