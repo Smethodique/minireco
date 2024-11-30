@@ -14,14 +14,28 @@
 
 void	parse_token_one(t_parse_context *ctx, t_token **tokens)
 {
+	  int first_arg = 1;
+
 	if ((*tokens)->type == COMMANDE || (*tokens)->type == ARG)
 	{
 		if (!ctx->current_command)
 		{
+			if ((*tokens)->type == ARG && first_arg)
+			{
+				first_arg = 0;
+				if (!expand_variables((*tokens)->value)  ||  !expand_variables((*tokens)->value)[0] == NULL)
+				{
+					ft_putstr_fd("Error: No valid commands or redirections found\n", 2);
+					return;
+				}
+
+				return;
+			}
 			ctx->current_command = new_command();
 			add_command(&ctx->command_list, ctx->current_command);
 		}
 		add_argument(ctx->current_command, (*tokens)->value);
+		first_arg = 0;
 	}
 }
 

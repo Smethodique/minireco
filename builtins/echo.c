@@ -60,6 +60,5 @@ int	echo(t_command *cmd, char **env)
 	if (!is_n_option(cmd->args[1]))
 		ft_putstr_fd("\n", 1);
 	g_vars.exit_status = 0;
-	printf("hi\n");
 	return (0);
 }

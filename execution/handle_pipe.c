@@ -19,7 +19,9 @@ void	handle_command_execution(t_command *current, char **env)
 	if (is_builtin(current) != NOT_BUILT_IN)
 		execute_builtin(current, env, is_builtin(current));
 	else
+	{
 		execute_external_command(current, env);
+	}
 	exit(0);
 }
 

@@ -58,14 +58,19 @@ void	execute_external_command(t_command *current, char **env)
 	char	*path;
 
 	path = get_path(current->args);
-	if (!path)
+       printf("current->args[0] = %s\n", current->args[0]);
+	if (!path && current->name)
 	{
 		ft_putstr_fd("minishell: command not found: ", 2);
 		ft_putstr_fd(current->args[0], 2);
 		ft_putstr_fd("\n", 2);
 		exit(127);
 	}
-	execve(path, current->args, env);
-	free(path);
-	exit(127);
+   if(execve(path, current->args, env) == -1 && current->name)
+   {
+	   perror("minishell: execution failed");
+	   exit(127);
+   }
+   free(path);
+   exit(0);
 }

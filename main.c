@@ -18,21 +18,22 @@ void	process_linee(char *line, char **env)
 {
 	t_token		*tokens;
 	t_command	*commands;
+
 	tokens = tokenize_input(line);
 	if (tokens)
 	{
-		print_tokens(tokens);
 		commands = parse_tokens(tokens);
-		if (commands && commands->name)
+		if (commands)
 		{
-			if (commands->next)
+			if ((commands->name || commands->redirections))
 			{
-				handle_pipes(commands, env);
+				if (commands->next)
+					handle_pipes(commands, env);
+				else if(commands->name)
+					execute_single_cmd(commands, env);
 			}
 			else
-			{
-				execute_single_cmd(commands, env);
-			}
+			 return ;
 			free_command_list(commands);
 		}
 		free_tokens(tokens);

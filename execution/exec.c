@@ -63,7 +63,7 @@ void	exec(t_command *cmd)
 void	execute_single_cmd(t_command *cmd, char **env)
 {
 	int	cmd_type;
-
+   
 	all_signals();
 	cmd_type = is_builtin(cmd);
 	if (cmd->redirections)
@@ -73,7 +73,7 @@ void	execute_single_cmd(t_command *cmd, char **env)
 		if (cmd_type == -1)
 			exec(cmd);
 		else
-			execute_builtin(cmd, env, cmd_type);
+			execute_builtin(cmd, env, cmd_type);	
 	}
 }
 

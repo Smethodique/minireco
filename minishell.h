@@ -47,6 +47,7 @@ typedef struct s_global_vars
 	int						flag_check;
 	int						in_fd;
 	int						env_allocated;
+	int						error_printed;
 
 }							t_global_vars;
 

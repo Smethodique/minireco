@@ -19,11 +19,12 @@ execution/handle_pipe_helper2.c execution/redirect_utils2.c execution/exec_helpe
 OBJS = $(SRCS:.c=.o)
 LIBFT = 1337Libft/libft.a
 CC = cc
-CFLAGS = -Wall -Wextra -Werror   #-g    #-fsanitize=address -g3 -I/Users/$(USER)/homebrew/opt/readline/include
+CFLAGS = -Wall -Wextra -Werror   #g    #-fsanitize=address -g3 -I/Users/$(USER)/homebrew/opt/readline/include
 LDFLAGS = -L1337Libft -lft -L/Users/$(USER)/homebrew/opt/readline/lib -lreadline
 
 # Add silent flags
 MAKEFLAGS += --silent
+CC += -w
 
 
 all: $(NAME)

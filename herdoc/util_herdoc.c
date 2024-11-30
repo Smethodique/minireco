@@ -79,7 +79,7 @@ static char	*read_heredoc_content(t_heredoc *hd)
 		if (!hd->line || g_vars.heredoc_interrupted)
 		{
 			free(hd->line);
-			break ;
+			
 		}
 		if (ft_strcmp(hd->line, hd->unquoted_delimiter) == 0)
 		{
@@ -99,33 +99,30 @@ static char	*read_heredoc_content(t_heredoc *hd)
 	return (hd->content);
 }
 
-char    *handle_heredoc(const char *delimiter, int expand_vars, t_parse_context *ctx)
-{
-	t_heredoc    hd;
-	void        (*old_handler)(int);
-	char        *result;
-	pid_t       pid;
-	int         status;
 
+
+char	*handle_heredoc(const char *delimiter, int expand_vars,t_parse_context *ctx)
+{
 	(void)ctx;
+	t_heredoc	hd;
+	void		(*old_handler)(int);
+	char		*result;
+
 	g_vars.heredoc_interrupted = 0;
 	old_handler = signal(SIGINT, sigint_handlerh);
 	init_heredoc(&hd, delimiter, expand_vars);
-	pid = fork();
-	if (pid == 0)
-	{
-		signal(SIGINT, SIG_DFL);
-		result = read_heredoc_content(&hd);
-		if (!result)
-			exit(1);
-		write(ctx->fd, hd.content, hd.content_size);
-	   return (result);	
-	}
-	waitpid(pid, &status, 0);
+	result = read_heredoc_content(&hd);
 	signal(SIGINT, old_handler);
-	if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
-		return (hd.content);
-	free(hd.content);
+	dup2(g_vars.khbi, 0);
+	if (g_vars.heredoc_interrupted)
+	{
+		free(hd.content);
+		free(hd.unquoted_delimiter);
+		g_vars.exit_status = 130;
+		return (NULL);
+	}
+	if (result)
+		result[hd.content_size] = '\0';
 	free(hd.unquoted_delimiter);
-	return (NULL);
+	return (result);
 }

@@ -122,7 +122,7 @@ char	*expand_variables(const char *str)
 			continue ;
 		}
 		exp.env_pos = ft_strchr(exp.temp, '$');
-		if (!exp.in_single_quote && exp.env_pos && exp.env_pos[1] != '\0')
+		 if (!exp.in_single_quote && exp.env_pos && exp.env_pos[1] != '\0' && exp.env_pos[1] != ' ' && exp.env_pos[1] != '"')
 			exp.result = expand_env_variable(&exp, g_vars.env);
 		else
 		{

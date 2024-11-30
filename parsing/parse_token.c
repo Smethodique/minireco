@@ -87,10 +87,10 @@ t_command	*parse_tokens(t_token *tokens)
 		{
 			parse_token_five(&ctx, &tokens);
 			if(g_vars.heredoc_interrupted)
-				{
-					g_vars.heredoc_interrupted = 0;
-					return (NULL);
-				}
+			{	
+				g_vars.heredoc_interrupted = 0;
+				return (ctx.command_list);
+			}
 			tokens = tokens->next;
 		}
 	}

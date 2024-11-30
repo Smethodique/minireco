@@ -60,6 +60,7 @@ int	check_file(const char *path, int mode)
 	{
 		if (S_ISDIR(st.st_mode))
 		{
+			printf("minishell: fdsfsd: Is a directory\n");
 			return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd((char *)path,
 					2), ft_putstr_fd(": Is a directory\n", 2), -1);
 		}

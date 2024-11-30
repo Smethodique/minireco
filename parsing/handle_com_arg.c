@@ -61,7 +61,8 @@ void	process_value(const char *input, int *i, t_handle_vars *vars,
 		return ;
 	if (*tokens == NULL || vars->last_token->type == PIPE
 		|| vars->last_token->type == FILENAME
-		|| vars->last_token->type == DELIMITER)
+		|| vars->last_token->type == DELIMITER
+		|| (vars->last_token->value && vars->last_token->value[0] == '\0'))
 		vars->type = COMMANDE;
 	else
 		vars->type = ARG;
