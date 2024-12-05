@@ -55,7 +55,9 @@ void	init_shell(char **env)
 			if (g_vars.env[1][6] >= '2' && g_vars.env[3] == NULL)
 			{
 				if (env)
+				{
 					ft_free(env);
+				}
 			}
 			break ;
 		}
@@ -73,7 +75,7 @@ char	**create_env(void)
 	char	**env;
 	char	cwd[1024];
 
-	env = malloc(sizeof(char *) * 5);
+	env = malloc(sizeof(char *) * 4);
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 	{
 		perror("getcwd() error");
@@ -106,12 +108,13 @@ int	main(int argc, char **argv, char **env)
 	g_vars.heredoc_interrupted = 0;
 	g_vars.in_pipe = 0;
 	g_vars.env_allocated = 0;
+	bool isunset = false;
 	if (env == NULL || env[0] == NULL)
 	{
 		env = create_env();
 	}
 	g_vars.env = env;
 	increment_shlvl(g_vars.env);
-	init_shell(env);
+	init_shell(g_vars.env);
 	return (g_vars.exit_status);
 }

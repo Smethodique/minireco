@@ -22,6 +22,7 @@ char	**ft_free(char **str)
 		free(str[i]);
 		i++;
 	}
+	free(str[i]);
 	free(str);
 	return (NULL);
 }

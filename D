@@ -1,7 +1,6 @@
 1337Libft
 builtins
 D
-e
 execution
 file
 herdoc
@@ -11,5 +10,4 @@ main.o
 Makefile
 minishell
 minishell.h
-out
 parsing

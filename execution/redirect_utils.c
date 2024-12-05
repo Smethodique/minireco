@@ -85,7 +85,9 @@ int	handle_output_redirection(t_redirection *red, int fd_out)
 	else
 		new_fd = open(expanded, O_WRONLY | O_CREAT | O_APPEND, P);
 	if (new_fd < 0)
-		return (-1);
+	{
+		return(free(expanded), free(strdup), -1);
+	}
 	dup2(new_fd, fd_out);
 	free(expanded);
 	free(strdup);

@@ -16,7 +16,7 @@ void	create_new_var(t_append *append, char ***env)
 {
 	append->temp = ft_strjoin(append->var_name, "=");
 	append->new_value = ft_strjoin(append->temp, append->var_value);
-	add_to_envp(env, append->new_value);
+	add_to_env(env, append->new_value);
 	free(append->temp);
 	free(append->new_value);
 }

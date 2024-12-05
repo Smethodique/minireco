@@ -11,5 +11,4 @@ main.o
 Makefile
 minishell
 minishell.h
-out
 parsing

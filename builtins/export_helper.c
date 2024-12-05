@@ -26,10 +26,16 @@ void	print_export(char *env)
 		}
 		printf("=\"");
 		i++;
-		printf("%s\"\n", (env + i));
+		while (env[i])
+		{
+			printf("%c", env[i++]);
+		}
+		printf("\"\n");
 	}
 	else
+	{
 		printf("%s\n", env);
+	}
 }
 
 int	check_env(char *cmd, char **env)
@@ -41,7 +47,7 @@ int	check_env(char *cmd, char **env)
 		return (0);
 	while (env[i])
 	{
-		if (!ft_strcmp(env[i], cmd))
+		if (!ft_strncmp(env[i], cmd, length(cmd)))
 			return (i);
 		else
 			i++;

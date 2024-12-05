@@ -88,7 +88,8 @@ t_command	*parse_tokens(t_token *tokens)
 			{
 				g_vars.error_printed = 0;
 				g_vars.heredoc_interrupted = 0;
-				return (ctx.command_list);
+				free_command_list(ctx.command_list);
+				return (NULL);
 			}
 			tokens = tokens->next;
 		}

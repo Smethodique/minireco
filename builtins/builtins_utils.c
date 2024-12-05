@@ -52,6 +52,7 @@ void	increment_shlvl(char **env)
 	int		i;
 	int		shlvl;
 	char	*tmp;
+	char	*new_value;
 
 	i = 0;
 	while (env[i])
@@ -63,8 +64,13 @@ void	increment_shlvl(char **env)
 			tmp = ft_itoa(shlvl);
 			if (!tmp)
 				return ;
-			env[i] = ft_strjoin("SHLVL=", tmp);
+			new_value = ft_strjoin("SHLVL=", tmp);
 			free(tmp);
+			if (!new_value)
+				return ;
+			if((double_pointer_len(env) == 3 && ft_strncmp(env[1], "SHLVL=", 6) == 0))
+			free(env[i]);
+			env[i] = new_value;
 			return ;
 		}
 		i++;

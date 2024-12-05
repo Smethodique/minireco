@@ -19,7 +19,6 @@ int	handle_cmd_exit(t_command *cmd)
 	i = 0;
 	if (!cmd->args[1])
 	{
-		g_vars.exit_status = 0;
 		exit(g_vars.exit_status);
 	}
 	while (cmd->args[1][i])
@@ -48,9 +47,13 @@ void	ft_exit(t_command *cmd)
 
 	i = 0;
 	status = 0;
-	ft_putstr_fd("exit\n", 1);
+	ft_putstr_fd("exit\n", 1);		
+
 	if (!handle_cmd_exit(cmd))
 		return ;
+
+	printf("args count : %d\n", cmd->arg_count);
+
 	if (cmd->arg_count == 2)
 	{
 		while (cmd->args[1][i])
@@ -80,25 +83,20 @@ void	export(t_command *cmd)
 		i = 1;
 		while (cmd->args[i])
 		{
-			printf("&env = %p\n", &g_vars.env);		
 			if (check_export(cmd->args[i]) == 1)
 			{
-				printf("cmd = %s\n", cmd->args[i]);
-				len = 0;
-				while (g_vars.env[len])
-					len++;
+				len = ft_strlen(cmd->args[i]);
 				export_helper(cmd->args[i], &g_vars.env, len);
-				
 			}
 			i++;
 		}
 	}
 	else
 	{
-		i = -1;
-		while (g_vars.env[++i])
-			print_export(g_vars.env[i]);
-	}
+		i = 0;
+		while(g_vars.env[i])
+			print_export(g_vars.env[i++]);
+}
 }
 
 void	execute_builtin(t_command *cmd, char **environment, int index)

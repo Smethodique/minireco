@@ -114,8 +114,6 @@ char	*handle_heredoc(const char *delimiter, int expand_vars,
 	dup2(g_vars.khbi, 0);
 	if (g_vars.heredoc_interrupted)
 	{
-		free(hd.content);
-		free(hd.unquoted_delimiter);
 		g_vars.exit_status = 130;
 		return (NULL);
 	}

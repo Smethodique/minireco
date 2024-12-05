@@ -1,5 +1,0 @@
-echo ilyas > ww | cat ww (leak) //ghaliban fel file name 
-unset $PATH   fixed wakha baqi can desplayi wahed error rah haneya
-echo ilyass >> ilyass.txt | cat  ilyass.txt  leaaaks
-echo loool >> ilyass.txt   leaks
-$PATH  // meli katderha bo7edha ki bqaw leaks (parse)

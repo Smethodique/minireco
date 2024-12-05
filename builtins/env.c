@@ -42,7 +42,7 @@ void	add_to_env(char ***env, char *new_var)
 	
 	new_env[i + 1] = NULL;
 	printf("g_vars.env_allocated = %d\n", g_vars.env_allocated);
-	if (g_vars.env_allocated )
+	if (g_vars.env_allocated)
 	{
 		g_vars.env_allocated = 0;
 		free_env(*env);
@@ -77,6 +77,8 @@ void	env(t_command *cmd)
 		g_vars.env = create_env();
 		return ;
 	}
+	else if(cmd->args && cmd->args[i])
+	 return ;
 	else
 		new_env = g_vars.env;
 	while (cmd->args[i] && ft_strchr(cmd->args[i], '='))
@@ -87,6 +89,7 @@ void	env(t_command *cmd)
 		print_env();
 		ft_setter(0);
 	}
+	
 	if (g_vars.env == NULL || g_vars.env[0] == NULL)
 		create_env();
 	ft_setter(0);

@@ -31,7 +31,7 @@ int	is_num(char *str)
 void	custom_exit(t_command *cmd, char **env)
 {
 	int	len;
-
+   printf("--exit\n");
 	len = double_pointer_len(cmd->args);
 	printf("--exit\n");
 	if (len == 1)
@@ -40,6 +40,7 @@ void	custom_exit(t_command *cmd, char **env)
 	}
 	else if (len == 2 && is_num(cmd->args[1]))
 	{
+		printf("here\n");	
 		exit(ft_atoi(cmd->args[1]));
 	}
 	else if (len > 2)

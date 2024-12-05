@@ -11,34 +11,33 @@
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
 void	export_helper(char *cmd, char ***env, int len)
 {
 	int		x;
 	char	*new_var;
-	int		i;
 
-	i = 0;
 	x = check_env(cmd, *env);
-	if (cmd[i] == '+')
-		i++;
-	if (cmd[i + 1] == '+' && cmd[i + 2] == '=')
+	if (ft_strchr(cmd, '+') && ft_strchr(cmd, '='))
 	{
-		append_export(cmd, env, len);
+		ft_putstr_fd("Minishell: export: not a valid identifier\n", 2);
+		g_vars.exit_status = 1;
 		return ;
 	}
-	if (x)
+	if (x && ft_strchr(cmd, '=') && (length(cmd) == length((*env)[x])))
 	{
+		if ((*env)[x])
 			free((*env)[x]);
-			printf("cmd = %s\n", cmd);
-		(*env)[x] = ft_strdup(cmd);
+			(*env)[x] = ft_strdup(cmd);
 	}
-	else
+	else if (!check_env(cmd, *env))
 	{
-		new_var = ft_strdup(cmd);
-		printf("new_var = %s\n", new_var);
-		add_to_env(env, new_var);
-		free(new_var);
+		if (ft_strchr(cmd, '='))
+		{
+			new_var = cmd;
+			add_to_env(env, new_var);
+		}
+		else
+			return ;
 	}
 }
 
