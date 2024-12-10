@@ -56,7 +56,8 @@ void	setup_child_process(int prev_pipe[2], int curr_pipe[2],
 void	execute_external_command(t_command *current, char **env)
 {
 	char	*path;
-		while (current->args && current->args[0] && current->args[0][0] == '\0')
+
+	while (current->args && current->args[0] && current->args[0][0] == '\0')
 		current->args++;
 	if (!current->args || !current->args[0])
 		exit(0);
@@ -68,12 +69,12 @@ void	execute_external_command(t_command *current, char **env)
 		ft_putstr_fd("\n", 2);
 		exit(127);
 	}
-   if(execve(path, current->args, env) == -1 && current->name)
-   {
-	   perror("minishell: execution failed");
-	   exit(127);
-   }
-   free(path);
-   free(current->args[0]);
-   exit(0);
+	if (execve(path, current->args, env) == -1 && current->name)
+	{
+		perror("minishell: execution failed");
+		exit(127);
+	}
+	free(path);
+	free(current->args[0]);
+	exit(0);
 }

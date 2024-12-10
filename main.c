@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/02 06:16:09 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 23:41:14 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,10 @@ void	init_shell(char **env)
 		if (!line)
 		{
 			printf("exit\n");
-			if (g_vars.env[1][6] >= '2' && g_vars.env[3] == NULL)
+			if (g_vars.khbi == 655)
 			{
 				if (env)
-				{
 					ft_free(env);
-				}
 			}
 			break ;
 		}
@@ -102,19 +100,24 @@ void	handle_exit_status(int status)
 
 int	main(int argc, char **argv, char **env)
 {
+	bool	isunset;
+
 	(void)argc;
 	(void)argv;
-	g_vars.khbi = -1;
+	g_vars.khbi = 1;
 	g_vars.heredoc_interrupted = 0;
 	g_vars.in_pipe = 0;
 	g_vars.env_allocated = 0;
-	bool isunset = false;
+	g_vars.error_printed = 0;
+	isunset = false;
 	if (env == NULL || env[0] == NULL)
 	{
 		env = create_env();
+		g_vars.khbi = 655;
+		isunset = true;
 	}
 	g_vars.env = env;
-	increment_shlvl(g_vars.env);
+	increment_shlvl(g_vars.env, isunset);
 	init_shell(g_vars.env);
 	return (g_vars.exit_status);
 }

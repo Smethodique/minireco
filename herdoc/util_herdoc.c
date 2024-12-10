@@ -19,6 +19,11 @@ void	init_heredoc(t_heredoc *hd, const char *delimiter, int expand_vars)
 {
 	hd->delimiter = delimiter;
 	hd->unquoted_delimiter = remove_quotes((char *)delimiter);
+	if (!hd->unquoted_delimiter)
+	{
+		free(hd->unquoted_delimiter);
+		return ;
+	}
 	hd->is_quoted = (ft_strcmp(delimiter, hd->unquoted_delimiter) != 0);
 	hd->content = NULL;
 	hd->content_size = 0;
@@ -98,27 +103,31 @@ static char	*read_heredoc_content(t_heredoc *hd)
 	return (hd->content);
 }
 
-char	*handle_heredoc(const char *delimiter, int expand_vars,
-		t_parse_context *ctx)
+char	*handle_heredoc(const char *delimiter, int expand_vars)
 {
 	t_heredoc	hd;
-	void		(*old_handler)(int);
 	char		*result;
+	pid_t		pid;
+	int			status;
+	int			pipe_fd[2];
 
-	(void)ctx;
-	g_vars.heredoc_interrupted = 0;
-	old_handler = signal(SIGINT, sigint_handlerh);
-	init_heredoc(&hd, delimiter, expand_vars);
-	result = read_heredoc_content(&hd);
-	signal(SIGINT, old_handler);
-	dup2(g_vars.khbi, 0);
-	if (g_vars.heredoc_interrupted)
-	{
-		g_vars.exit_status = 130;
+	if (pipe(pipe_fd) == -1)
 		return (NULL);
+	signal(SIGINT, SIG_IGN);
+	pid = fork();
+	if (pid == 0)
+	{
+		signal(SIGINT, SIG_DFL);
+		init_heredoc(&hd, delimiter, expand_vars);
+		result = read_heredoc_content(&hd);
+		write_and_free(pipe_fd, &hd, result);
 	}
-	if (result)
-		result[hd.content_size] = '\0';
-	free(hd.unquoted_delimiter);
-	return (result);
+	close(pipe_fd[1]);
+	waitpid(pid, &status, 0);
+	result = read_from_pipe(pipe_fd[0]);
+	if (WIFEXITED(status))
+		g_vars.exit_status = WEXITSTATUS(status);
+	if (WIFSIGNALED(status))
+		g_vars.heredoc_interrupted = 1;
+	return (close(pipe_fd[0]), result);
 }

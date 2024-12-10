@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/02 06:35:08 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 23:42:54 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,6 @@ int	handle_redirection(t_redirection *redir, int fd_in)
 	if (redir->type == INPUT || redir->type == HEREDOC)
 	{
 		expanded = ft_strdup(redir->filename);
-		if (redir->type == INPUT)
-		{
-			if (check_file(expanded, O_RDONLY) == -1)
-			{
-				g_vars.exit_status = 1;
-				free(expanded);
-				return (-1);
-			}
-		}
 		new_fd = open(expanded, O_RDONLY);
 		if (new_fd < 0)
 		{
@@ -86,7 +77,7 @@ int	handle_output_redirection(t_redirection *red, int fd_out)
 		new_fd = open(expanded, O_WRONLY | O_CREAT | O_APPEND, P);
 	if (new_fd < 0)
 	{
-		return(free(expanded), free(strdup), -1);
+		return (free(expanded), free(strdup), -1);
 	}
 	dup2(new_fd, fd_out);
 	free(expanded);

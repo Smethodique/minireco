@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_token.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/29 00:21:47 by nel-ouar         ###   ########.fr       */
+/*   Updated: 2024/12/07 21:05:05 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,11 +84,11 @@ t_command	*parse_tokens(t_token *tokens)
 		if (tokens)
 		{
 			parse_token_five(&ctx, &tokens);
-			if (g_vars.heredoc_interrupted || g_vars.error_printed)
+			if (g_vars.heredoc_interrupted )
 			{
-				g_vars.error_printed = 0;
-				g_vars.heredoc_interrupted = 0;
 				free_command_list(ctx.command_list);
+				g_vars.exit_status = 130;
+				g_vars.heredoc_interrupted = 0;
 				return (NULL);
 			}
 			tokens = tokens->next;

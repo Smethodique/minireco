@@ -6,13 +6,13 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/02 06:03:56 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/06 23:37:39 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-ft_strnlen(const char *s, size_t maxlen)
+size_t	ft_strnlen(const char *s, size_t maxlen)
 {
 	size_t	len;
 

@@ -58,11 +58,9 @@ void	parse_token_four(t_parse_context *ctx, t_token **tokens)
 		}
 		if (!(*tokens)->next || (*tokens)->next->type != DELIMITER)
 			return ;
-		ctx->heredoc_content = handle_heredoc((*tokens)->next->value, 1, ctx);
+		ctx->heredoc_content = handle_heredoc((*tokens)->next->value, 1);
 		ft_strcpy(ctx->temp_filename, "/tmp/minishell_heredocXXXXXX");
 		ctx->fd = my_mkstemp(ctx->temp_filename);
-		if (g_vars.heredoc_interrupted)
-			reset_signals();
 		if (ctx->heredoc_content)
 		{
 			write(ctx->fd, ctx->heredoc_content,

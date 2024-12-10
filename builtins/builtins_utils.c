@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/02 09:24:24 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 02:36:11 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	double_pointer_len(char **str)
 	return (i);
 }
 
-void	increment_shlvl(char **env)
+void	increment_shlvl(char **env, bool is_shlvl)
 {
 	int		i;
 	int		shlvl;
@@ -62,14 +62,12 @@ void	increment_shlvl(char **env)
 			shlvl = atoi(env[i] + 6);
 			shlvl++;
 			tmp = ft_itoa(shlvl);
-			if (!tmp)
-				return ;
 			new_value = ft_strjoin("SHLVL=", tmp);
 			free(tmp);
 			if (!new_value)
 				return ;
-			if((double_pointer_len(env) == 3 && ft_strncmp(env[1], "SHLVL=", 6) == 0))
-			free(env[i]);
+			if (is_shlvl)
+				free(env[i]);
 			env[i] = new_value;
 			return ;
 		}

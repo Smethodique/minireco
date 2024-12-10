@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/11/16 23:00:12 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 23:09:21 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	exec_in_child(t_command *cmd, char **env)
 	{
 		read_input_loop();
 	}
-	if (cmd->name && execve(cmd->args[0], cmd->args, env) == -1  )
+	if (cmd->name && execve(cmd->args[0], cmd->args, env) == -1)
 	{
 		perror("minishell: execution failed");
 		exit(127);

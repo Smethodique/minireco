@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path_expantion.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nel-ouar <nel-ouar@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/24 15:28:36 by nel-ouar         ###   ########.fr       */
+/*   Updated: 2024/12/07 21:08:17 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ int	check_file(const char *path, int mode)
 	{
 		if (S_ISDIR(st.st_mode))
 		{
-			printf("minishell: fdsfsd: Is a directory\n");
 			return (ft_putstr_fd("minishell: ", 2), ft_putstr_fd((char *)path,
 					2), ft_putstr_fd(": Is a directory\n", 2), -1);
 		}

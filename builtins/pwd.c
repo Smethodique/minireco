@@ -69,7 +69,6 @@ size_t	length(char *s)
 	if (!s)
 		return (0);
 	i = 0;
-	
 	while (s[i] && s[i] != '=')
 		i++;
 	return (i);

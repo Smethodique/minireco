@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/02 07:36:13 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 02:39:52 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,9 @@ void	ft_exit(t_command *cmd)
 
 	i = 0;
 	status = 0;
-	ft_putstr_fd("exit\n", 1);		
-
+	ft_putstr_fd("exit\n", 1);
 	if (!handle_cmd_exit(cmd))
 		return ;
-
-	printf("args count : %d\n", cmd->arg_count);
-
 	if (cmd->arg_count == 2)
 	{
 		while (cmd->args[1][i])
@@ -94,9 +90,11 @@ void	export(t_command *cmd)
 	else
 	{
 		i = 0;
-		while(g_vars.env[i])
+		while (g_vars.env[i])
+		{
 			print_export(g_vars.env[i++]);
-}
+		}
+	}
 }
 
 void	execute_builtin(t_command *cmd, char **environment, int index)

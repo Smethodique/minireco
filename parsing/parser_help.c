@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_help.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stakhtou <stakhtou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/21 16:44:48 by stakhtou         ###   ########.fr       */
+/*   Updated: 2024/12/07 21:01:29 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void	handle_heredoc_delim(const char *input, int *i, int len,
 	if (!delimiter || delimiter[0] == '\0')
 	{
 		free(delimiter);
-		printf("Error: Invalid syntax\n");
 		return ;
 	}
 	add_token(tokens, new_token(DELIMITER, delimiter));

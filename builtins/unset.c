@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 15:27:07 by nel-ouar          #+#    #+#             */
-/*   Updated: 2024/12/02 04:34:06 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 02:52:33 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,11 @@ static int	find_env_var(char *var_name)
 		curr_len = length(g_vars.env[i]);
 		if (curr_len == var_len && !ft_strncmp(g_vars.env[i], var_name,
 				var_len))
+		{
+			if(g_vars.env_allocated)
+			free(g_vars.env[i]);
 			return (i);
+		}
 		i++;
 	}
 	return (-1);

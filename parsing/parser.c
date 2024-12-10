@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stakhtou <stakhtou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/21 04:39:28 by stakhtou         ###   ########.fr       */
+/*   Updated: 2024/12/07 23:47:02 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ int	check_heredoc_delim(t_token *tokens)
 					|| ft_strcmp(tokens->next->value, "|") == 0)
 				|| ft_strcmp(tokens->next->value, "") == 0)
 			{
+				ft_putstr_fd("Error: Invalid or", 2);
+				ft_putstr_fd("unmatched delimiter in herdoc\n", 2);
 				return (0);
 			}
 		}

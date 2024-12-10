@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 12:10:05 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/02 05:30:06 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/07 23:48:04 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ typedef struct s_global_vars
 	int						in_fd;
 	int						env_allocated;
 	int						error_printed;
+	char					last_char;
 
 }							t_global_vars;
 
@@ -341,7 +342,7 @@ void						handle_existing_no_value(t_append *append,
 
 int							my_mkstemp(char *template);
 char						*expand_variables(const char *str);
-void						increment_shlvl(char **env);
+void						increment_shlvl(char **env, bool is_unset);
 void						append_export(char *cmd, char ***env, int len);
 
 int							ft_isspace(char c);
@@ -387,7 +388,7 @@ void						heredoc_signals(void);
 
 void						reset_signals(void);
 char						*handle_heredoc(const char *delimiter,
-								int expand_vars, t_parse_context *ctx);
+								int expand_vars);
 int							read_and_process_line(t_heredoc *hdoc,
 								int expand_vars);
 void						cleanup_heredoc(t_heredoc *hdoc);
@@ -396,6 +397,10 @@ int							read_and_process_line(t_heredoc *hdoc,
 void						add_argument(t_command *cmd, char *arg);
 void						add_redirection(t_command *cmd, int type,
 								char *filename);
+char						*read_from_pipe(int fd);
+void						write_and_free(int pipe_fd[2], t_heredoc *hd,
+								char *result);
+
 void						add_command(t_command **list, t_command *cmd);
 char						*ft_strjoin_char(char *s, char c);
 char						*process_quotes(t_expansion *exp);
@@ -501,7 +506,7 @@ void						setup_redirection(t_command *cmd);
 int							is_num(char *str);
 void						export(t_command *cmd);
 int							check_export(char *cmd);
-void						export_helper(char *cmd, char ***env, int len);
+int							export_helper(char *cmd, char ***env, int len);
 void						print_export(char *env);
 int							pwd(t_command *cmd, char **env);
 void						unset(t_command *cmd);

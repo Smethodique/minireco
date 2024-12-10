@@ -29,8 +29,7 @@ void	sigint_handlerh(int signum)
 {
 	g_vars.exit_status = 130;
 	(void)signum;
-	g_vars.khbi = dup(0);
-	close(0);
+	exit(130);
 	g_vars.heredoc_interrupted = 1;
 }
 
@@ -53,12 +52,6 @@ void	sigint_handler(int sig)
 		if (!g_vars.in_pipe && g_vars.heredoc_interrupted == 0)
 		{
 			write(1, "\n", 1);
-			rl_on_new_line();
-			rl_replace_line("", 0);
-			rl_redisplay();
-		}
-		else if (g_vars.heredoc_interrupted == 1)
-		{
 			rl_on_new_line();
 			rl_replace_line("", 0);
 			rl_redisplay();

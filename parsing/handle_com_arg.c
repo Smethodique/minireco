@@ -61,8 +61,8 @@ void	process_value(const char *input, int *i, t_handle_vars *vars,
 		return ;
 	if (*tokens == NULL || vars->last_token->type == PIPE
 		|| vars->last_token->type == FILENAME
-		|| vars->last_token->type == DELIMITER
-		|| (vars->last_token->value && vars->last_token->value[0] == '\0'))
+		|| vars->last_token->type == DELIMITER || (vars->last_token->value
+			&& vars->last_token->value[0] == '\0'))
 		vars->type = COMMANDE;
 	else
 		vars->type = ARG;
@@ -83,16 +83,16 @@ int	detect_unclosed_quotes(const char *str)
 	in_single_quotes = 0;
 	while (str && str[i])
 	{
-		if (str[i] == '"' && !in_single_quotes)
+		if (str[i] == '"' && in_single_quotes == 0)
+		{
 			in_double_quotes = !in_double_quotes;
-		else if (str[i] == '\'' && !in_double_quotes)
+		}
+		else if (str[i] == '\'' && in_double_quotes == 0)
 			in_single_quotes = !in_single_quotes;
 		i++;
 	}
 	if (in_double_quotes || in_single_quotes)
-	{
 		return (1);
-	}
 	return (0);
 }
 
@@ -105,7 +105,7 @@ void	handle_command_or_argument(const char *input, int *i, int len,
 	initialize_handle_vars(&vars, input, i, tokens);
 	parse_comm(input, i, len, &vars);
 	unclosed_quotes = detect_unclosed_quotes(input);
-	if (unclosed_quotes == 1 || unclosed_quotes == 2)
+	if (unclosed_quotes == 1)
 	{
 		ft_putstr_fd("Error: unclosed quote\n", 2);
 		g_vars.exit_status = 2;

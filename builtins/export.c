@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stakhtou <stakhtou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/24 16:42:07 by stakhtou         ###   ########.fr       */
+/*   Updated: 2024/12/07 02:49:03 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-void	export_helper(char *cmd, char ***env, int len)
+
+int	export_helper(char *cmd, char ***env, int len)
 {
 	int		x;
 	char	*new_var;
@@ -19,15 +20,14 @@ void	export_helper(char *cmd, char ***env, int len)
 	x = check_env(cmd, *env);
 	if (ft_strchr(cmd, '+') && ft_strchr(cmd, '='))
 	{
-		ft_putstr_fd("Minishell: export: not a valid identifier\n", 2);
 		g_vars.exit_status = 1;
-		return ;
+		return (ft_putstr_fd(" export: not a valid identifier\n", 2), 0);
 	}
 	if (x && ft_strchr(cmd, '=') && (length(cmd) == length((*env)[x])))
 	{
 		if ((*env)[x])
 			free((*env)[x]);
-			(*env)[x] = ft_strdup(cmd);
+		(*env)[x] = ft_strdup(cmd);
 	}
 	else if (!check_env(cmd, *env))
 	{
@@ -37,7 +37,7 @@ void	export_helper(char *cmd, char ***env, int len)
 			add_to_env(env, new_var);
 		}
 		else
-			return ;
+			return (0);
 	}
 }
 
@@ -54,13 +54,6 @@ int	check_export(char *cmd)
 	i = 0;
 	while (cmd[i] && cmd[i] != '=')
 	{
-		// if (cmd[i] == '+' && cmd[i + 1] == '=')
-		// {
-		// 	if (i == 0)
-		// 		return (ft_putstr_fd("Minishell: not a valid identifier\n", 2),
-		// 			g_vars.exit_status = 1, 0);
-		// 	break ;
-		// }
 		if (!ft_isalnum(cmd[i]) && cmd[i] != '_' && cmd[i] != '+')
 			return (ft_putstr_fd("Minishell: not a valid identifier\n", 2),
 				g_vars.exit_status = 1, 0);

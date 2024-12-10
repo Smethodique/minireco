@@ -12,23 +12,20 @@
 
 #include "../minishell.h"
 
-
-
-void update_env_variable(char **env, char *var, char *value)
+void	update_env_variable(char **env, char *var, char *value)
 {
-	int i;
-	char new_var[4096];  
+	int		i;
+	char	new_var[4096];
 
 	i = 0;
 	ft_strcpy(new_var, var);
 	ft_strcat(new_var, value);
-
 	while (env[i])
 	{
 		if (ft_strncmp(env[i], var, ft_strlen(var)) == 0)
 		{
 			ft_strcpy(env[i], new_var);
-			return;
+			return ;
 		}
 		i++;
 	}
