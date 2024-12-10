@@ -34,6 +34,7 @@ int	export_helper(char *cmd, char ***env, int len)
 		if (ft_strchr(cmd, '='))
 		{
 			new_var = cmd;
+				g_vars.env_locked = 1;
 			add_to_env(env, new_var);
 		}
 		else

@@ -73,7 +73,14 @@ char	**create_env(void)
 	char	**env;
 	char	cwd[1024];
 
+	g_vars.env_locked += 1;
+	if (g_vars.env_locked > 1)
+	{
+		ft_free(g_vars.env);
+		g_vars.env_locked -= 1;
+	}
 	env = malloc(sizeof(char *) * 4);
+
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 	{
 		perror("getcwd() error");
@@ -108,6 +115,7 @@ int	main(int argc, char **argv, char **env)
 	g_vars.heredoc_interrupted = 0;
 	g_vars.in_pipe = 0;
 	g_vars.env_allocated = 0;
+	g_vars.env_locked = 0;
 	g_vars.error_printed = 0;
 	isunset = false;
 	if (env == NULL || env[0] == NULL)

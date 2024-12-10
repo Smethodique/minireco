@@ -71,12 +71,7 @@ void	env(t_command *cmd)
 
 	i = 1;
 	new_env = NULL;
-	if (cmd->args && cmd->args[1] && ft_strcmp(cmd->args[1], "-i") == 0)
-	{
-		g_vars.env = create_env();
-		return ;
-	}
-	else if (cmd->args && cmd->args[i])
+	 if (cmd->args && cmd->args[i])
 		return ;
 	else
 		new_env = g_vars.env;

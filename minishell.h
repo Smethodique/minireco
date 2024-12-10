@@ -48,7 +48,7 @@ typedef struct s_global_vars
 	int						in_fd;
 	int						env_allocated;
 	int						error_printed;
-	char					last_char;
+	int                      env_locked;
 
 }							t_global_vars;
 
