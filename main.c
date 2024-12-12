@@ -55,7 +55,7 @@ void	init_shell(char **env)
 			if (g_vars.khbi == 655)
 			{
 				if (env)
-					ft_free(env);
+					ft_free(g_vars.env);
 			}
 			break ;
 		}
@@ -73,12 +73,12 @@ char	**create_env(void)
 	char	**env;
 	char	cwd[1024];
 
-	g_vars.env_locked += 1;
-	if (g_vars.env_locked > 1)
-	{
-		ft_free(g_vars.env);
-		g_vars.env_locked -= 1;
-	}
+	// g_vars.env_locked += 1;
+	// if (g_vars.env_locked > 1)
+	// {
+	// 	ft_free(g_vars.env);
+	// 	g_vars.env_locked -= 1;
+	// }
 	env = malloc(sizeof(char *) * 4);
 
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
