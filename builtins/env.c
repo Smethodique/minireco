@@ -55,17 +55,22 @@ void	print_env(void)
 {
 	int	i;
 	char *pwd;
+	char *old_pwd;
 
 	i = 0;
 	while (g_vars.env[i])
 	{
 		if (ft_strncmp(g_vars.env[i], "PWD=", 4) == 0)
 		{
-			free(g_vars.env[i]);
 			pwd = getcwd(NULL, 0);
+			if(double_pointer_len(g_vars.env) < 50)
+				free(g_vars.env[i]);
 			if (pwd)
 			{
+				old_pwd = g_vars.env[i];
 				g_vars.env[i] = ft_strjoin("PWD=", pwd);
+				if (g_vars.env_allocated)
+					free(old_pwd);
 				free(pwd);
 			}
 			break;
