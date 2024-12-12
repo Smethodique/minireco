@@ -54,25 +54,27 @@ void	add_to_env(char ***env, char *new_var)
 void	print_env(void)
 {
 	int	i;
-	int env_len;	
+	char *pwd;
 
 	i = 0;
-	env_len = double_pointer_len(g_vars.env);
-	if(env_len == 3)
-	{
-		//delete the old one and create a new one
-		free_env(g_vars.env);
-		g_vars.env = create_env();
-
-	}
 	while (g_vars.env[i])
 	{
-		if(!g_vars.env[i])
+		if (ft_strncmp(g_vars.env[i], "PWD=", 4) == 0)
+		{
+			free(g_vars.env[i]);
+			pwd = getcwd(NULL, 0);
+			if (pwd)
+			{
+				g_vars.env[i] = ft_strjoin("PWD=", pwd);
+				free(pwd);
+			}
 			break;
-		ft_putstr_fd(g_vars.env[i], 1);
-		ft_putstr_fd("\n", 1);
+		}
 		i++;
 	}
+	i = 0;
+	while (g_vars.env[i])
+		printf("%s\n", g_vars.env[i++]);
 }
 void	env(t_command *cmd)
 {

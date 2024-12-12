@@ -32,6 +32,14 @@
 # include <unistd.h>
 # define NOT_BUILT_IN -1
 # include <readline/readline.h>
+# include "Garbage_collector/header.h"
+
+
+void *allocate(size_t size);
+void free_memory();
+void free_address(void *ptr);
+List **head();
+
 # define P 0644
 # define PATH_MAX 4096
 
