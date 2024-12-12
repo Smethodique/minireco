@@ -1,27 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   header.h                                           :+:      :+:    :+:   */
+/*   memory.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/12 19:12:23 by iabboudi          #+#    #+#             */
-/*   Updated: 2024/12/12 19:12:24 by iabboudi         ###   ########.fr       */
+/*   Created: 2024/12/12 19:12:12 by iabboudi          #+#    #+#             */
+/*   Updated: 2024/12/12 19:12:13 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LC_HEADER_H
-# define LC_HEADER_H
+#include "../minishell.h"
 
-# include <stdint.h>
-# include <stdlib.h>
-# include <string.h>
 
-typedef struct List_
+void	gc_free_memrefs(t_memref *mem_ref)
 {
-	size_t			size;
-	uintptr_t		ptr;
-	struct List_	*next;
-}					List;
+	t_memref *tmp;
 
-#endif
+	if (!mem_ref)
+		return ;
+	while (mem_ref)
+	{
+		tmp = mem_ref;
+		mem_ref = mem_ref->next;
+		free(tmp->mem_data);
+		tmp->mem_data = NULL;
+		free(tmp);
+	}
+}

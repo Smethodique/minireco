@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/07 23:41:14 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/12 08:31:06 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,6 @@ void	init_shell(char **env)
 		if (!line)
 		{
 			printf("exit\n");
-			if (g_vars.khbi == 655)
-			{
-				if (env);
-					// ft_free(env);
-			}
 			gc_free_all();
 			break ;
 		}
@@ -74,18 +69,14 @@ char	**create_env(void)
 	char	cwd[1024];
 
 	env = malloc(sizeof(char *) * 4);
-	gc_add(0, env);
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 	{
 		perror("getcwd() error");
 		return (NULL);
 	}
 	env[0] = ft_strjoin("PWD=", cwd);
-	gc_add(0, env[0]);
 	env[1] = ft_strdup("SHLVL=1");
-	gc_add(0, env[1]);
 	env[2] = ft_strdup("_=/usr/bin/env");
-	gc_add(0, env[2]);
 	env[3] = NULL;
 	return (env);
 }
@@ -118,11 +109,13 @@ int	main(int argc, char **argv, char **env)
 	if (env == NULL || env[0] == NULL)
 	{
 		env = create_env();
+		gc_add_double(0,(void **)env);
 		g_vars.khbi = 655;
 		isunset = true;
 	}
 	g_vars.env = env;
 	increment_shlvl(g_vars.env, isunset);
 	init_shell(g_vars.env);
+	gc_add(0 ,g_vars.env);
 	return (g_vars.exit_status);
 }

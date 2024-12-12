@@ -6,14 +6,11 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/07 02:49:03 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/12 08:53:51 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-
-
 
 int	export_helper(char *cmd, char ***env, int len)
 {
@@ -21,24 +18,21 @@ int	export_helper(char *cmd, char ***env, int len)
 	char	*new_var;
 
 	x = check_env(cmd, *env);
-	if (ft_strchr(cmd, '+') && ft_strchr(cmd, '='))
+	if (ft_strchr(cmd, '+') )
 	{
 		g_vars.exit_status = 1;
 		return (ft_putstr_fd(" export: not a valid identifier\n", 2), 0);
 	}
-	if (x && ft_strchr(cmd, '=') && (length(cmd) == length((*env)[x])))
+	if (x &&(length(cmd) == length((*env)[x])))
 	{
 		(*env)[x] = ft_strdup(cmd);
 		gc_add(0, (*env)[x]);
 	}
 	else if (!check_env(cmd, *env))
 	{
-		if (ft_strchr(cmd, '='))
-		{
 			new_var = cmd;
-				g_vars.env_locked = 1;
+			g_vars.env_locked = 1;
 			add_to_env(env, new_var);
-		}
 	}
 	return (1);
 }

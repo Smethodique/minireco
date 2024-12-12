@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/07 21:05:05 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/12 07:59:02 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ t_command	*parse_tokens(t_token *tokens)
 		if (tokens)
 		{
 			parse_token_five(&ctx, &tokens);
-			if (g_vars.heredoc_interrupted )
+			if (g_vars.heredoc_interrupted)
 			{
 				free_command_list(ctx.command_list);
 				g_vars.exit_status = 130;

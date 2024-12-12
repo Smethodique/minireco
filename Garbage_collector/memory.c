@@ -3,196 +3,124 @@
 /*                                                        :::      ::::::::   */
 /*   memory.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhrima <mhrima@student.42.fr>              +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/28 21:02:29 by mhrima            #+#    #+#             */
-/*   Updated: 2023/12/03 01:32:53 by mhrima           ###   ########.fr       */
+/*   Created: 2024/12/12 19:12:12 by iabboudi          #+#    #+#             */
+/*   Updated: 2024/12/12 19:12:13 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void exit_minishell(int exit_code)
+void	gc_add_double(int mem_group_id, void **mem)
 {
-    gc_free_all();
-    exit(exit_code);
+	int	i;
+
+	i = 0;
+	while (mem && mem[i])
+	{
+		gc_add(mem_group_id, mem[i]);
+		i++;
+	}
+	gc_add(mem_group_id, mem);
 }
 
-t_memgroup    **gc_get_memgroups(void)
+void	gc_free_memgrp(int mem_group_id)
 {
-    static t_memgroup    *mem_groups;
+	t_memgroup	**mem_groups;
+	t_memgroup	*prev;
+	t_memgroup	*current;
 
-    return (&mem_groups);
+	mem_groups = gc_get_memgroups();
+	current = *mem_groups;
+	prev = NULL;
+	while (current)
+	{
+		if (current->id == mem_group_id)
+		{
+			if (prev)
+				prev->next = current->next;
+			else
+				*mem_groups = current->next;
+			gc_free_memrefs(current->mem_refs);
+			free(current);
+			current = NULL;
+			return ;
+		}
+		prev = current;
+		current = current->next;
+	}
 }
 
-t_memgroup    *gc_create_mem_group(int id)
+void	gc_free_specific_memref(t_memref **mem_ref_head,
+		t_memref *mem_ref_to_free)
 {
-    t_memgroup    *new_mem_group;
+	t_memref	*curr;
+	t_memref	*prev;
 
-    new_mem_group = malloc(sizeof(t_memgroup));
-    if (!new_mem_group)
-        exit_minishell(12);
-    new_mem_group->id = id;
-    new_mem_group->mem_refs = NULL;
-    new_mem_group->next = NULL;
-    return (new_mem_group);
+	if (!mem_ref_head || !mem_ref_to_free)
+		return ;
+	curr = *mem_ref_head;
+	prev = NULL;
+	while (curr)
+	{
+		if (curr == mem_ref_to_free)
+		{
+			if (prev)
+				prev->next = curr->next;
+			else
+				*mem_ref_head = curr->next;
+			free(curr->mem_data);
+			curr->mem_data = NULL;
+			free(curr);
+			curr = NULL;
+			return ;
+		}
+		prev = curr;
+		curr = curr->next;
+	}
 }
 
-t_memgroup    *gc_get_specific_memgroup(int id)
+void	gc_free_all(void)
 {
-    t_memgroup    **mem_groups;
-    t_memgroup    *new_mem_group;
-    t_memgroup    *current;
-    t_memgroup    *prev;
+	t_memgroup	**mem_groups;
+	t_memgroup	*current;
+	t_memgroup	*tmp;
 
-    mem_groups = gc_get_memgroups();
-    current = *mem_groups;
-    prev = NULL;
-    while (current)
-    {
-        if (current->id == id)
-            return (current);
-        prev = current;
-        current = current->next;
-    }
-    new_mem_group = gc_create_mem_group(id);
-    if (!new_mem_group)
-        return (NULL);
-    if (!*mem_groups)
-        *mem_groups = new_mem_group;
-    else
-        prev->next = new_mem_group;
-    return (new_mem_group);
+	mem_groups = gc_get_memgroups();
+	current = *mem_groups;
+	while (current)
+	{
+		tmp = current;
+		current = current->next;
+		gc_free_memrefs(tmp->mem_refs);
+		free(tmp);
+	}
+	*mem_groups = NULL;
 }
-
-t_memref    **gc_get_memrefs(int id)
+void	gc_add(int mem_group_id, void *mem)
 {
-    return (&(gc_get_specific_memgroup(id)->mem_refs));
-}
+	t_memref **mem_ref;
+	t_memref *new_mem_ref;
+	t_memref *curr;
 
-void    gc_free_memrefs(t_memref *mem_ref)
-{
-    t_memref    *tmp;
-
-    if (!mem_ref)
-        return ;
-    while (mem_ref)
-    {
-        tmp = mem_ref;
-        mem_ref = mem_ref->next;
-        free(tmp->mem_data);
-        tmp->mem_data = NULL;
-        free(tmp);
-    }
-}
-void    gc_add_double(int mem_group_id, void **mem)
-{
-    int    i;
-
-    i = 0;
-    while (mem && mem[i])
-    {
-        gc_add(mem_group_id, mem[i]);
-        i++;
-    }
-    gc_add(mem_group_id, mem);
-}
-
-void    gc_free_memgrp(int mem_group_id)
-{
-    t_memgroup    **mem_groups;
-    t_memgroup    *prev;
-    t_memgroup    *current;
-
-    mem_groups = gc_get_memgroups();
-    current = *mem_groups;
-    prev = NULL;
-    while (current)
-    {
-        if (current->id == mem_group_id)
-        {
-            if (prev)
-                prev->next = current->next;
-            else
-                *mem_groups = current->next;
-            gc_free_memrefs(current->mem_refs);
-            free(current);
-            current = NULL;
-            return ;
-        }
-        prev = current;
-        current = current->next;
-    }
-}
-void    gc_free_specific_memref(t_memref **mem_ref_head,
-        t_memref *mem_ref_to_free)
-{
-    t_memref    *curr;
-    t_memref    *prev;
-
-    if (!mem_ref_head || !mem_ref_to_free)
-        return ;
-    curr = *mem_ref_head;
-    prev = NULL;
-    while (curr)
-    {
-        if (curr == mem_ref_to_free)
-        {
-            if (prev)
-                prev->next = curr->next;
-            else
-                *mem_ref_head = curr->next;
-            free(curr->mem_data);
-            curr->mem_data = NULL;
-            free(curr);
-            curr = NULL;
-            return ;
-        }
-        prev = curr;
-        curr = curr->next;
-    }
-}
-
-void    gc_free_all(void)
-{
-    t_memgroup    **mem_groups;
-    t_memgroup    *current;
-    t_memgroup    *tmp;
-
-    mem_groups = gc_get_memgroups();
-    current = *mem_groups;
-    while (current)
-    {
-        tmp = current;
-        current = current->next;
-        gc_free_memrefs(tmp->mem_refs);
-        free(tmp);
-    }
-    *mem_groups = NULL;
-}
-void    gc_add(int mem_group_id, void *mem)
-{
-    t_memref    **mem_ref;
-    t_memref    *new_mem_ref;
-    t_memref    *curr;
-
-    if (!mem)
-        return ;
-    new_mem_ref = ft_calloc(sizeof(t_memref), 1);
-    if (!new_mem_ref)
-    {
-        free(mem);
-        exit_minishell(12);
-    }
-    new_mem_ref->mem_data = mem;
-    mem_ref = gc_get_memrefs(mem_group_id);
-    if (!*mem_ref)
-        *mem_ref = new_mem_ref;
-    else
-    {
-        curr = *mem_ref;
-        while (curr->next)
-            curr = curr->next;
-        curr->next = new_mem_ref;
-    }
+	if (!mem)
+		return ;
+	new_mem_ref = ft_calloc(sizeof(t_memref), 1);
+	if (!new_mem_ref)
+	{
+		free(mem);
+		exit_minishell(12);
+	}
+	new_mem_ref->mem_data = mem;
+	mem_ref = gc_get_memrefs(mem_group_id);
+	if (!*mem_ref)
+		*mem_ref = new_mem_ref;
+	else
+	{
+		curr = *mem_ref;
+		while (curr->next)
+			curr = curr->next;
+		curr->next = new_mem_ref;
+	}
 }

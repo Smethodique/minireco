@@ -35,29 +35,28 @@
 //# include "Garbage_collector/header.h"
 typedef struct s_memref
 {
-    void                    *mem_data;
-    struct s_memref            *next;
-}                            t_memref;
+	void					*mem_data;
+	struct s_memref			*next;
+}							t_memref;
 
 typedef struct s_memgroup
 {
-    int                        id;
-    t_memref                *mem_refs;
-    struct s_memgroup        *next;
-} t_memgroup;
-t_memgroup                    **gc_get_memgroups(void);
-t_memgroup                    *gc_create_mem_group(int id);
-t_memgroup                    *gc_get_specific_memgroup(int id);
-t_memref                    **gc_get_memrefs(int id);
-void                        gc_free_memrefs(t_memref *mem_ref);
-void                        gc_free_specific_memref(t_memref **mem_ref_head,
-                                t_memref *mem_ref_to_free);
-void                        gc_add(int mem_group_id, void *mem);
-void                        gc_add_double(int mem_group_id, void **mem);
-void                        gc_free_memgrp(int mem_group_id);
-void                        gc_free_all(void);
-void                        exit_minishell(int exit_code);
-
+	int						id;
+	t_memref				*mem_refs;
+	struct s_memgroup		*next;
+}							t_memgroup;
+t_memgroup					**gc_get_memgroups(void);
+t_memgroup					*gc_create_mem_group(int id);
+t_memgroup					*gc_get_specific_memgroup(int id);
+t_memref					**gc_get_memrefs(int id);
+void						gc_free_memrefs(t_memref *mem_ref);
+void						gc_free_specific_memref(t_memref **mem_ref_head,
+								t_memref *mem_ref_to_free);
+void						gc_add(int mem_group_id, void *mem);
+void						gc_add_double(int mem_group_id, void **mem);
+void						gc_free_memgrp(int mem_group_id);
+void						gc_free_all(void);
+void						exit_minishell(int exit_code);
 
 # define P 0644
 # define PATH_MAX 4096
@@ -75,7 +74,7 @@ typedef struct s_global_vars
 	int						in_fd;
 	int						env_allocated;
 	int						error_printed;
-	int                      env_locked;
+	int						env_locked;
 
 }							t_global_vars;
 
@@ -305,14 +304,14 @@ typedef struct s_quote_vars
 
 typedef struct s_parse_context
 {
-	t_command	*command_list;
-	t_command	*current_command;
-	int			status;
-	char		*env_value;
-	char		*heredoc_content;
-	char		temp_filename[sizeof("/tmp/minishell_heredocXXXXXX")];
-	int			fd;
-	char		exit_status_str[12];
+	t_command				*command_list;
+	t_command				*current_command;
+	int						status;
+	char					*env_value;
+	char					*heredoc_content;
+	char					temp_filename[sizeof("/tmp/minishell_heredocXXXXXX")];
+	int						fd;
+	char					exit_status_str[12];
 }							t_parse_context;
 
 typedef struct s_env_var_data

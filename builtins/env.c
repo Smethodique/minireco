@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/07 02:24:00 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/12 20:14:27 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,40 +41,38 @@ void	add_to_env(char ***env, char *new_var)
 		gc_add(0, new_env[i]);
 		i++;
 	}
-	new_env[i] = ft_strdup(new_var);
-	new_env[i + 1] = NULL;
+	new_env[i] = ft_strdup(new_var);	
 	gc_add(0, new_env[i]);
+	new_env[i + 1] = NULL;
 	*env = new_env;
-	
 }
 
 void	print_env(void)
 {
-	int	i;
-	char *pwd;
-	char *old_pwd;
+	int		i;
+	char	*new_pwd;
+	char	*cwd;
 
 	i = 0;
 	while (g_vars.env[i])
 	{
 		if (ft_strncmp(g_vars.env[i], "PWD=", 4) == 0)
 		{
-			pwd = getcwd(NULL, 0);
-			gc_add(0, pwd);
-			if (pwd)
-			{
-				old_pwd = g_vars.env[i];
-				g_vars.env[i] = ft_strjoin("PWD=", pwd);
-				gc_add(0, g_vars.env[i]);
-			}
-			break;
+			if(g_vars .khbi == 655 )
+		{
+			cwd = getcwd(NULL, 0);
+			new_pwd = ft_strjoin("PWD=", cwd);
+			free(cwd);
+			gc_add(0, new_pwd);
+			g_vars.env[i] = new_pwd;
 		}
+		}
+
+		printf("%s\n", g_vars.env[i]);
 		i++;
 	}
-	i = 0;
-	while (g_vars.env[i])
-		printf("%s\n", g_vars.env[i++]);
 }
+
 void	env(t_command *cmd)
 {
 	int		i;
@@ -82,7 +80,7 @@ void	env(t_command *cmd)
 
 	i = 1;
 	new_env = NULL;
-	 if (cmd->args && cmd->args[i])
+	if (cmd->args && cmd->args[i])
 		return ;
 	else
 		new_env = g_vars.env;

@@ -60,7 +60,7 @@ int	echo(t_command *cmd, char **env)
 	if (!is_n_option(cmd->args[1]))
 		ft_putstr_fd("\n", 1);
 	g_vars.exit_status = 0;
-	if(g_vars.heredoc_interrupted)
+	if (g_vars.heredoc_interrupted)
 	{
 		g_vars.exit_status = 130;
 		g_vars.heredoc_interrupted = 0;
