@@ -12,6 +12,9 @@
 
 #include "../minishell.h"
 
+
+
+
 int	export_helper(char *cmd, char ***env, int len)
 {
 	int		x;
@@ -25,9 +28,8 @@ int	export_helper(char *cmd, char ***env, int len)
 	}
 	if (x && ft_strchr(cmd, '=') && (length(cmd) == length((*env)[x])))
 	{
-		if ((*env)[x])
-			free((*env)[x]);
 		(*env)[x] = ft_strdup(cmd);
+		gc_add(0, (*env)[x]);
 	}
 	else if (!check_env(cmd, *env))
 	{
@@ -37,9 +39,8 @@ int	export_helper(char *cmd, char ***env, int len)
 				g_vars.env_locked = 1;
 			add_to_env(env, new_var);
 		}
-		else
-			return (0);
 	}
+	return (1);
 }
 
 int	check_export(char *cmd)

@@ -28,8 +28,6 @@ static int	find_env_var(char *var_name)
 		if (curr_len == var_len && !ft_strncmp(g_vars.env[i], var_name,
 				var_len))
 		{
-			if(g_vars.env_allocated || g_vars.env_locked)
-				free(g_vars.env[i]);
 			return (i);
 		}
 		i++;

@@ -32,13 +32,32 @@
 # include <unistd.h>
 # define NOT_BUILT_IN -1
 # include <readline/readline.h>
-# include "Garbage_collector/header.h"
+//# include "Garbage_collector/header.h"
+typedef struct s_memref
+{
+    void                    *mem_data;
+    struct s_memref            *next;
+}                            t_memref;
 
+typedef struct s_memgroup
+{
+    int                        id;
+    t_memref                *mem_refs;
+    struct s_memgroup        *next;
+} t_memgroup;
+t_memgroup                    **gc_get_memgroups(void);
+t_memgroup                    *gc_create_mem_group(int id);
+t_memgroup                    *gc_get_specific_memgroup(int id);
+t_memref                    **gc_get_memrefs(int id);
+void                        gc_free_memrefs(t_memref *mem_ref);
+void                        gc_free_specific_memref(t_memref **mem_ref_head,
+                                t_memref *mem_ref_to_free);
+void                        gc_add(int mem_group_id, void *mem);
+void                        gc_add_double(int mem_group_id, void **mem);
+void                        gc_free_memgrp(int mem_group_id);
+void                        gc_free_all(void);
+void                        exit_minishell(int exit_code);
 
-void *allocate(size_t size);
-void free_memory();
-void free_address(void *ptr);
-List **head();
 
 # define P 0644
 # define PATH_MAX 4096

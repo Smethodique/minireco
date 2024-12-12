@@ -52,7 +52,6 @@ int	pwd(t_command *cmd, char **env)
 		{
 			if (ft_strncmp(g_vars.env[i], "OLDPWD=", 7) == 0)
 			{
-				free(g_vars.env[i++]);
 				g_vars.env[i++] = oldpwd;
 				break ;
 			}

@@ -62,12 +62,12 @@ void	increment_shlvl(char **env, bool is_shlvl)
 			shlvl = atoi(env[i] + 6);
 			shlvl++;
 			tmp = ft_itoa(shlvl);
+			gc_add(0, tmp);
 			new_value = ft_strjoin("SHLVL=", tmp);
-			free(tmp);
 			if (!new_value)
 				return ;
 			if (is_shlvl)
-				free(env[i]);
+				gc_add(0, new_value);
 			env[i] = new_value;
 			return ;
 		}

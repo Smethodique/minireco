@@ -33,22 +33,19 @@ void	add_to_env(char ***env, char *new_var)
 
 	len = double_pointer_len(*env);
 	new_env = malloc(sizeof(char *) * (len + 2));
+	gc_add(0, new_env);
 	i = 0;
 	while (i < len)
 	{
 		new_env[i] = ft_strdup((*env)[i]);
+		gc_add(0, new_env[i]);
 		i++;
 	}
 	new_env[i] = ft_strdup(new_var);
 	new_env[i + 1] = NULL;
-	if (g_vars.env_allocated)
-	{
-		g_vars.env_allocated = 0;
-		free_env(*env);
-	}
+	gc_add(0, new_env[i]);
 	*env = new_env;
 	
-	g_vars.env_allocated = 1;
 }
 
 void	print_env(void)
@@ -63,15 +60,12 @@ void	print_env(void)
 		if (ft_strncmp(g_vars.env[i], "PWD=", 4) == 0)
 		{
 			pwd = getcwd(NULL, 0);
-			if(double_pointer_len(g_vars.env) < 50)
-				free(g_vars.env[i]);
+			gc_add(0, pwd);
 			if (pwd)
 			{
 				old_pwd = g_vars.env[i];
 				g_vars.env[i] = ft_strjoin("PWD=", pwd);
-				if (g_vars.env_allocated)
-					free(old_pwd);
-				free(pwd);
+				gc_add(0, g_vars.env[i]);
 			}
 			break;
 		}

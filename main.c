@@ -54,9 +54,10 @@ void	init_shell(char **env)
 			printf("exit\n");
 			if (g_vars.khbi == 655)
 			{
-				if (env)
-					ft_free(env);
+				if (env);
+					// ft_free(env);
 			}
+			gc_free_all();
 			break ;
 		}
 		if (line)
@@ -64,7 +65,6 @@ void	init_shell(char **env)
 			process_linee(line, env);
 			add_history(line);
 		}
-		free(line);
 	}
 }
 
@@ -73,22 +73,19 @@ char	**create_env(void)
 	char	**env;
 	char	cwd[1024];
 
-	g_vars.env_locked += 1;
-	if (g_vars.env_locked > 1)
-	{
-		ft_free(g_vars.env);
-		g_vars.env_locked -= 1;
-	}
 	env = malloc(sizeof(char *) * 4);
-
+	gc_add(0, env);
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 	{
 		perror("getcwd() error");
 		return (NULL);
 	}
 	env[0] = ft_strjoin("PWD=", cwd);
+	gc_add(0, env[0]);
 	env[1] = ft_strdup("SHLVL=1");
+	gc_add(0, env[1]);
 	env[2] = ft_strdup("_=/usr/bin/env");
+	gc_add(0, env[2]);
 	env[3] = NULL;
 	return (env);
 }

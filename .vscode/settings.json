@@ -3,6 +3,7 @@
         "minishell.h": "c",
         "stdlib.h": "c",
         "signal.h": "c",
-        "header.h": "c"
+        "header.h": "c",
+        "readline.h": "c"
     }
 }

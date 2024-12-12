@@ -10,63 +10,189 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "header.h"
+#include "../minishell.h"
 
-List **head()
+void exit_minishell(int exit_code)
 {
-    static List *curr;
-
-    if (curr == NULL)
-        curr = calloc(1, sizeof(List));
-    return &curr;
+    gc_free_all();
+    exit(exit_code);
 }
 
-void *allocate(size_t size)
+t_memgroup    **gc_get_memgroups(void)
 {
-    void *ptr;
-    List *curr;
+    static t_memgroup    *mem_groups;
 
-    ptr = calloc(size, 1);
-    curr = calloc(1, sizeof(List));
-    curr->size = size;
-    curr->ptr = (uintptr_t)ptr;
-    curr->next = *head();
-    *head() = curr;
-    return ptr;
+    return (&mem_groups);
 }
 
-void free_memory()
+t_memgroup    *gc_create_mem_group(int id)
 {
-    List *node;
-    List *tmp;
+    t_memgroup    *new_mem_group;
 
-    node = *head();
-    while (node)
+    new_mem_group = malloc(sizeof(t_memgroup));
+    if (!new_mem_group)
+        exit_minishell(12);
+    new_mem_group->id = id;
+    new_mem_group->mem_refs = NULL;
+    new_mem_group->next = NULL;
+    return (new_mem_group);
+}
+
+t_memgroup    *gc_get_specific_memgroup(int id)
+{
+    t_memgroup    **mem_groups;
+    t_memgroup    *new_mem_group;
+    t_memgroup    *current;
+    t_memgroup    *prev;
+
+    mem_groups = gc_get_memgroups();
+    current = *mem_groups;
+    prev = NULL;
+    while (current)
     {
-        tmp = node->next;
-        free((void*)node->ptr);
-        free(node);
-        node = tmp;
+        if (current->id == id)
+            return (current);
+        prev = current;
+        current = current->next;
+    }
+    new_mem_group = gc_create_mem_group(id);
+    if (!new_mem_group)
+        return (NULL);
+    if (!*mem_groups)
+        *mem_groups = new_mem_group;
+    else
+        prev->next = new_mem_group;
+    return (new_mem_group);
+}
+
+t_memref    **gc_get_memrefs(int id)
+{
+    return (&(gc_get_specific_memgroup(id)->mem_refs));
+}
+
+void    gc_free_memrefs(t_memref *mem_ref)
+{
+    t_memref    *tmp;
+
+    if (!mem_ref)
+        return ;
+    while (mem_ref)
+    {
+        tmp = mem_ref;
+        mem_ref = mem_ref->next;
+        free(tmp->mem_data);
+        tmp->mem_data = NULL;
+        free(tmp);
+    }
+}
+void    gc_add_double(int mem_group_id, void **mem)
+{
+    int    i;
+
+    i = 0;
+    while (mem && mem[i])
+    {
+        gc_add(mem_group_id, mem[i]);
+        i++;
+    }
+    gc_add(mem_group_id, mem);
+}
+
+void    gc_free_memgrp(int mem_group_id)
+{
+    t_memgroup    **mem_groups;
+    t_memgroup    *prev;
+    t_memgroup    *current;
+
+    mem_groups = gc_get_memgroups();
+    current = *mem_groups;
+    prev = NULL;
+    while (current)
+    {
+        if (current->id == mem_group_id)
+        {
+            if (prev)
+                prev->next = current->next;
+            else
+                *mem_groups = current->next;
+            gc_free_memrefs(current->mem_refs);
+            free(current);
+            current = NULL;
+            return ;
+        }
+        prev = current;
+        current = current->next;
+    }
+}
+void    gc_free_specific_memref(t_memref **mem_ref_head,
+        t_memref *mem_ref_to_free)
+{
+    t_memref    *curr;
+    t_memref    *prev;
+
+    if (!mem_ref_head || !mem_ref_to_free)
+        return ;
+    curr = *mem_ref_head;
+    prev = NULL;
+    while (curr)
+    {
+        if (curr == mem_ref_to_free)
+        {
+            if (prev)
+                prev->next = curr->next;
+            else
+                *mem_ref_head = curr->next;
+            free(curr->mem_data);
+            curr->mem_data = NULL;
+            free(curr);
+            curr = NULL;
+            return ;
+        }
+        prev = curr;
+        curr = curr->next;
     }
 }
 
-List *free_node(List *node, uintptr_t ptr)
+void    gc_free_all(void)
 {
-    List *tmp;
+    t_memgroup    **mem_groups;
+    t_memgroup    *current;
+    t_memgroup    *tmp;
 
-    if (node && node->ptr == ptr)
+    mem_groups = gc_get_memgroups();
+    current = *mem_groups;
+    while (current)
     {
-        tmp = node->next;
-        free((void *)node->ptr);
-        free(node);
-        return tmp;
+        tmp = current;
+        current = current->next;
+        gc_free_memrefs(tmp->mem_refs);
+        free(tmp);
     }
-    if (node)
-        node->next = free_node(node->next, ptr);
-    return node;
+    *mem_groups = NULL;
 }
-
-void free_address(void *ptr)
+void    gc_add(int mem_group_id, void *mem)
 {
-    *head() = free_node(*head(), (uintptr_t)ptr);
+    t_memref    **mem_ref;
+    t_memref    *new_mem_ref;
+    t_memref    *curr;
+
+    if (!mem)
+        return ;
+    new_mem_ref = ft_calloc(sizeof(t_memref), 1);
+    if (!new_mem_ref)
+    {
+        free(mem);
+        exit_minishell(12);
+    }
+    new_mem_ref->mem_data = mem;
+    mem_ref = gc_get_memrefs(mem_group_id);
+    if (!*mem_ref)
+        *mem_ref = new_mem_ref;
+    else
+    {
+        curr = *mem_ref;
+        while (curr->next)
+            curr = curr->next;
+        curr->next = new_mem_ref;
+    }
 }
