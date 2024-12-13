@@ -51,7 +51,7 @@ void	add_to_env(char ***env, char *new_var)
 void	print_env(void)
 {
 	int		i;
-	char	pwd[4096];
+	char	*pwd;
 	char	*pwd_var;
 
 	i = 0;
@@ -71,7 +71,7 @@ void	print_env(void)
 				}
 			}
 		}
-		else
+		else if (strchr(g_vars.env[i], '='))
 			printf("%s\n", g_vars.env[i]);
 		i++;
 	}

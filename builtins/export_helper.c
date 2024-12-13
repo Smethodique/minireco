@@ -14,23 +14,29 @@
 
 void	print_export(char *env)
 {
- 	   	int		i;
+	int		i;
 	char	*pwd;
-	char	*env_value;
+	char	*pwd_var;
 
 	i = 0;
 	while (g_vars.env[i])
 	{
-		env_value = ft_strdup(g_vars.env[i]);
-		gc_add(0, env_value);
 		if (strncmp(g_vars.env[i], "PWD=", 4) == 0)
 		{
 			pwd = getcwd(NULL, 0);
-			g_vars.env[i] = ft_strjoin("PWD=", pwd);
-			gc_add(0, g_vars.env[i]);
-			gc_add(0, pwd);
+			if (pwd)
+			{
+				pwd_var = ft_strjoin("PWD=", pwd);
+				if (pwd_var)
+				{
+					printf("declare -x %s\n", pwd_var);
+					free(pwd);
+					free(pwd_var);
+				}
+			}
 		}
-		printf("declare -x %s\n", env_value);
+		else
+			printf("declare -x %s\n", g_vars.env[i]);
 		i++;
 	}
 }

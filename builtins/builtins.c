@@ -88,13 +88,7 @@ void	export(t_command *cmd)
 		}
 	}
 	else
-	{
-		i = 0;
-		while (g_vars.env[i])
-		{
-			print_export(g_vars.env[i++]);
-		}
-	}
+	    print_export(g_vars.env);
 }
 
 void	execute_builtin(t_command *cmd, char **environment, int index)

@@ -52,7 +52,8 @@ void	init_shell(char **env)
 		if (!line)
 		{
 			printf("exit\n");
-			gc_free_all();
+			if(g_vars.khbi != 655)
+				gc_free_all();
 			break ;
 		}
 		if (line)
@@ -66,18 +67,22 @@ void	init_shell(char **env)
 char	**create_env(void)
 {
 	char	**env;
-	char	cwd[1024];
+	char	*pwd;
 
 	env = malloc(sizeof(char *) * 4);
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
-	{
-		perror("getcwd() error");
+	if (!env)
 		return (NULL);
-	}
-	env[0] = ft_strjoin("PWD=", cwd);
-	env[1] = ft_strdup("SHLVL=1");
-	env[2] = ft_strdup("_=/usr/bin/env");
+	pwd = getcwd(NULL, 0);
+	static char env_storage[4][256];
+	ft_strlcpy(env_storage[0], "PWD=", 256);
+	ft_strlcat(env_storage[0], pwd, 256);
+	ft_strlcpy(env_storage[1], "SHLVL=1", 256);
+	ft_strlcpy(env_storage[2], "_=/usr/bin/env", 256);
+	env[0] = env_storage[0];
+	env[1] = env_storage[1];
+	env[2] = env_storage[2];
 	env[3] = NULL;
+	free(pwd);
 	return (env);
 }
 
