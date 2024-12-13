@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/07 02:21:27 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/13 02:28:19 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,24 @@
 
 void	print_export(char *env)
 {
-	int	i;
+ 	   	int		i;
+	char	*pwd;
+	char	*env_value;
 
 	i = 0;
-	printf("declare -x ");
-	if (ft_strchr(env, '='))
+	while (g_vars.env[i])
 	{
-		while (env[i] != '=')
+		env_value = ft_strdup(g_vars.env[i]);
+		gc_add(0, env_value);
+		if (strncmp(g_vars.env[i], "PWD=", 4) == 0)
 		{
-			printf("%c", env[i++]);
+			pwd = getcwd(NULL, 0);
+			g_vars.env[i] = ft_strjoin("PWD=", pwd);
+			gc_add(0, g_vars.env[i]);
+			gc_add(0, pwd);
 		}
-		printf("=\"");
+		printf("declare -x %s\n", env_value);
 		i++;
-		while (env[i])
-		{
-			printf("%c", env[i++]);
-		}
-		printf("\"\n");
-	}
-	else
-	{
-		printf("%s\n", env);
 	}
 }
 

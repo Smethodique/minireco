@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:12:12 by iabboudi          #+#    #+#             */
-/*   Updated: 2024/12/12 19:12:13 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/12 22:41:49 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,11 +98,12 @@ void	gc_free_all(void)
 	}
 	*mem_groups = NULL;
 }
+
 void	gc_add(int mem_group_id, void *mem)
 {
-	t_memref **mem_ref;
-	t_memref *new_mem_ref;
-	t_memref *curr;
+	t_memref	**mem_ref;
+	t_memref	*new_mem_ref;
+	t_memref	*curr;
 
 	if (!mem)
 		return ;

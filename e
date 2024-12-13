@@ -1,0 +1,12 @@
+1337Libft
+builtins
+e
+execution
+Garbage_collector
+herdoc
+main.c
+main.o
+Makefile
+minishell
+minishell.h
+parsing

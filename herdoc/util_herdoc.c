@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   util_herdoc.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stakhtou <stakhtou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/10/21 03:26:40 by stakhtou         ###   ########.fr       */
+/*   Updated: 2024/12/12 23:52:03 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ static char	*read_heredoc_content(t_heredoc *hd)
 		if (!hd->line || g_vars.heredoc_interrupted)
 		{
 			free(hd->line);
+			break;
 		}
 		if (ft_strcmp(hd->line, hd->unquoted_delimiter) == 0)
 		{

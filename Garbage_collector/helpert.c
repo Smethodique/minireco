@@ -1,21 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   memory.c                                           :+:      :+:    :+:   */
+/*   helpert.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 19:12:12 by iabboudi          #+#    #+#             */
-/*   Updated: 2024/12/12 19:12:13 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/12 22:41:21 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-
 void	gc_free_memrefs(t_memref *mem_ref)
 {
-	t_memref *tmp;
+	t_memref	*tmp;
 
 	if (!mem_ref)
 		return ;

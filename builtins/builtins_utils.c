@@ -64,7 +64,7 @@ void	increment_shlvl(char **env, bool is_shlvl)
 			tmp = ft_itoa(shlvl);
 			gc_add(0, tmp);
 			new_value = ft_strjoin("SHLVL=", tmp);
-			gc_add(0 , new_value);
+			gc_add(0, new_value);
 			if (!new_value)
 				return ;
 			env[i] = new_value;

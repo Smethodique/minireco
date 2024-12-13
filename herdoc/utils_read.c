@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.c                                           :+:      :+:    :+:   */
+/*   utils_read.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/06 23:38:20 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/12 22:43:06 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ void	write_and_free(int pipe_fd[2], t_heredoc *hd, char *result)
 {
 	write(pipe_fd[1], result, ft_strlen(result));
 	free(result);
-
 	g_vars.exit_status = 130;
 	g_vars.heredoc_interrupted = 1;
 	exit(130);

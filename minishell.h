@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/05 12:10:05 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/07 23:48:04 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/13 01:35:12 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,15 +304,15 @@ typedef struct s_quote_vars
 
 typedef struct s_parse_context
 {
-	t_command				*command_list;
-	t_command				*current_command;
-	int						status;
-	char					*env_value;
-	char					*heredoc_content;
-	char					temp_filename[sizeof("/tmp/minishell_heredocXXXXXX")];
-	int						fd;
-	char					exit_status_str[12];
-}							t_parse_context;
+	t_command		*command_list;
+	t_command		*current_command;
+	int				status;
+	char			*env_value;
+	char			*heredoc_content;
+	char			temp_filename[sizeof("/tmp/minishell_heredocXXXXXX")];
+	int				fd;
+	char			exit_status_str[12];
+}					t_parse_context;
 
 typedef struct s_env_var_data
 {

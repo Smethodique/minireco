@@ -6,7 +6,7 @@
 /*   By: iabboudi <iabboudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 17:05:45 by stakhtou          #+#    #+#             */
-/*   Updated: 2024/12/12 08:31:06 by iabboudi         ###   ########.fr       */
+/*   Updated: 2024/12/12 22:45:22 by iabboudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,13 +109,13 @@ int	main(int argc, char **argv, char **env)
 	if (env == NULL || env[0] == NULL)
 	{
 		env = create_env();
-		gc_add_double(0,(void **)env);
+		gc_add_double(0, (void **)env);
 		g_vars.khbi = 655;
 		isunset = true;
 	}
 	g_vars.env = env;
 	increment_shlvl(g_vars.env, isunset);
 	init_shell(g_vars.env);
-	gc_add(0 ,g_vars.env);
+	gc_add(0, g_vars.env);
 	return (g_vars.exit_status);
 }
