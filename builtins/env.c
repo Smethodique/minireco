@@ -57,7 +57,7 @@ void	print_env(void)
 	i = 0;
 	while (g_vars.env[i])
 	{
-		if (strncmp(g_vars.env[i], "PWD=", 4) == 0)
+		if (strncmp(g_vars.env[i], "PWD=", 4) == 0 )
 		{
 			pwd = getcwd(NULL, 0);
 			if (pwd)
